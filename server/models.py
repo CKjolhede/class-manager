@@ -20,7 +20,6 @@ class StudentAssignment(db.Model, SerializerMixin):
     __tablename__ = 'student_assignments'
     id = db.Column(db.Integer, primary_key=True)
     points_earned = db.Column(db.Integer, nullable=True)
-    completed = db.Column(db.Boolean, default=False)
     
     student_id = db.Column(db.Integer, db.ForeignKey('students.id'), nullable=False)
     assignment_id = db.Column(db.Integer, db.ForeignKey('assignments.id'), nullable=False)
@@ -29,6 +28,8 @@ class StudentAssignment(db.Model, SerializerMixin):
     
     def __repr__(self):
         return f'<StudentAssignment {self.id} {self.points_earned} {self.assignment_id}>'
+    
+
 class StudentCourse(db.Model, SerializerMixin):
     __tablename__ = 'student_courses'
     id = db.Column(db.Integer, primary_key=True)
@@ -127,48 +128,9 @@ class Assignment(db.Model, SerializerMixin):
     #one to many
     course_id = db.Column(db.Integer, db.ForeignKey('courses.id'), nullable=False)
     #many to many
-    students = db.relationship('Student', secondary=studentassignments, back_populates='assignments')
+    students = db.relationship('Student', secondary='student_assignments', back_populates='assignments')
 
     def __repr__(self):
         return f'<Assignment: {self.name} | Points Possible: {self.points_possible} | Description:{self.description}>'
     
     serializer_rules = ('-course.assignments', '-course.teachers', '-student_assigments.assignments', '-student_assigments.students')
-
-################################################################################    
-#class StudentAssignment(db.Model, SerializerMixin):
-#    __tablename__ = 'student_assignments'
-#    id = db.Column(db.Integer, primary_key=True)
-#    points_earned = db.Column(db.Integer, nullable=True)
-#    completed = db.Column(db.Boolean, default=False)
-    
-#    student_id = db.Column(db.Integer, db.ForeignKey('students.id'), nullable=False)
-#    assignment_id = db.Column(db.Integer, db.ForeignKey('assignments.id'), nullable=False)
-    
-#    student = db.relationship('Student', back_populates='student_assignments')
-#    assignment = db.relationship('Assignment', back_populates='student_assigments')
-    
-#    serializer_rules = ('-assignments.student_assignments', '-students.student_assignments')
-    
-#    def __repr__(self):
-#        return f'<StudentAssignment {self.id} {self.points_earned} {self.assignment_id}>'
-
-################################################################################ 
-
-
-
-#class StudentCourse(db.Model, SerializerMixin):
-#    __tablename__ = 'student_courses'
-#    id = db.Column(db.Integer, primary_key=True)
-    
-#    student_id = db.Column(db.Integer, db.ForeignKey('students.id'), nullable=False)
-#    course_id = db.Column(db.Integer, db.ForeignKey('courses.id'), nullable=False)
-    
-#    student = db.relationship('Student', back_populates='student_courses')
-#    course = db.relationship('Course', back_populates='student_courses')
-    
-#    serializer_rules = ('-students.student_courses', '-courses.student_courses')
-    
-#    def __repr__(self):
-#        return f'<StudentCourse {self.student_id} {self.course_id}>'
-    
-    

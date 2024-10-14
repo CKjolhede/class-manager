@@ -1,7 +1,8 @@
 import logging
 from logging.config import fileConfig
+from models import Teacher, Student, Course, Assignment, StudentAssignment, StudentCourse
+
 from flask import current_app
-from models import Course, Student, Teacher
 
 from alembic import context
 
