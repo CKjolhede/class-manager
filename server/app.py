@@ -129,38 +129,43 @@ class StudentbyId(Resource):
     
 class StudentsbyTeacherId(Resource):
     def get(self, teacher_id):
-        students = Student.query.join(Teacher).filter(Teacher.id == teacher_id).all()
+        students = Student.query.join(StudentCourse).join(Course).join(Teacher).filter(Teacher.id == teacher_id).all()
         return [student.to_dict(only=["id", "first_name", "last_name", "email"]) for student in students]
     
 class StudentsbyCourseId(Resource):
     def get(self, course_id):
-        students = StudentCourse.query.join(Student).filter(StudentCourse.course_id == course_id).all()
+        students = Student.query.join(StudentCourse).filter(StudentCourse.course_id == course_id).all()
         return [student.to_dict(only=["id", "first_name", "last_name", "email"]) for student in students]
     
 class StudentsbyAssignmentId(Resource):
     def get(self, assignment_id):
         #ipdb.set_trace()
         students = Student.query.join(StudentAssignment).filter(StudentAssignment.assignment_id == assignment_id).all()
-        #ipdb.set_trace()
-        return [student.to_dict(only=["id", "first_name", "last_name", "email"]) for student in students]
+        #assignment = Assignment.query.filter(Assignment.id == assignment_id).first()
+
+        return (
+            #[assignment.to_dict(only=["id", "name", "points_possible"])], 
+            [student.to_dict(only=["id", "first_name", "last_name", "email"]) for student in students], 200) 
     
 ## COURSES ###########################################################
 
 class Courses(Resource):
     def get(self):
         courses = Course.query.all()
-        return [course.to_dict(only=["id", "name"]) for course in courses]
+        return [course.to_dict(only=["id", "description", "teacher_id"]) for course in courses]
 
     def post(self):
         course = Course(**request.get_json())
         db.session.add(course)
         db.session.commit()
-        return course.to_dict(only=["id", "name"]), 201
+        return course.to_dict(only=["id", "description", "teacher_id"]), 201
     
 class CoursebyId(Resource):
     def get(self, course_id):
         if course := Course.query.filter(Course.id == course_id).first():
-            return course.to_dict(only=["id", "name"])
+            teacher = Teacher.query.filter(Teacher.id == course.teacher_id).first()
+            teacher_name = f"{teacher.name}"
+            return ((course.to_dict(only=["id", "description", "teacher_id"]), f'teacher_name: {teacher_name}'), 200) 
         else:
             raise NotFound
         
@@ -178,12 +183,12 @@ class CoursebyId(Resource):
         for key, value in request.get_json().items():
                 setattr(course, key, value)
                 db.session.commit()
-        return make_response(course.to_dict(only=["id", "name"]), 200)
+        return make_response(course.to_dict(only=["id", "description", "teacher_id"]), 200)
     
 class CoursebyTeacherId(Resource):
     def get(self, teacher_id):
         courses = Course.query.filter(Course.teacher_id == teacher_id).all()
-        return [course.to_dict(only=["id", "name"]) for course in courses]
+        return [course.to_dict(only=["id", "description", "teacher_id"]) for course in courses]
 
 class CoursesbyStudentId(Resource):
     def get(self, student_id):
@@ -250,18 +255,18 @@ api.add_resource(Teachers, '/teachers')
 api.add_resource(TeacherbyId, '/teacher/<int:teacher_id>')
 api.add_resource(Students, '/students')
 api.add_resource(StudentbyId, '/student/<int:student_id>')
-api.add_resource(StudentsbyCourseId, '/courses/<int:course_id>/students')
-api.add_resource(StudentsbyAssignmentId, '/assignments/<int:assignment_id>/students')
-api.add_resource(StudentsbyTeacherId, '/teachers/<int:teacher_id>/students')
+api.add_resource(StudentsbyCourseId, '/course/<int:course_id>/students')
+api.add_resource(StudentsbyAssignmentId, '/assignment/<int:assignment_id>/students')
+api.add_resource(StudentsbyTeacherId, '/teacher/<int:teacher_id>/students')
 api.add_resource(Courses, '/courses')
-api.add_resource(CoursebyId, '/courses/<int:course_id>')
-api.add_resource(CoursebyTeacherId, '/teachers/<int:teacher_id>/courses')
-api.add_resource(CoursesbyStudentId, '/students/<int:student_id>/courses')
+api.add_resource(CoursebyId, '/course/<int:course_id>')
+api.add_resource(CoursebyTeacherId, '/teacher/<int:teacher_id>/courses')
+api.add_resource(CoursesbyStudentId, '/student/<int:student_id>/courses')
 api.add_resource(Assignments, '/assignments')
-api.add_resource(AssignmentbyId, '/assignments/<int:assignment_id>')
-api.add_resource(AssignmentsbyStudentId, '/students/<int:student_id>/assignments')
-api.add_resource(AssignmentsbyCourseId, '/courses/<int:course_id>/assignments')
-api.add_resource(AssignmentsbyTeacherId, '/teachers/<int:teacher_id>/assignments')
+api.add_resource(AssignmentbyId, '/assignment/<int:assignment_id>')
+api.add_resource(AssignmentsbyStudentId, '/student/<int:student_id>/assignments')
+api.add_resource(AssignmentsbyCourseId, '/course/<int:course_id>/assignments')
+api.add_resource(AssignmentsbyTeacherId, '/teacher/<int:teacher_id>/assignments')
 api.add_resource(StudentAssignmentsbyTeacherId, '/teachers/<int:teacher_id>/studentassignments')
 
 

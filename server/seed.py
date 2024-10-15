@@ -38,9 +38,12 @@ def create_students():
 
 def create_courses(teachers):
     courses = []
+    teacher_ids = [teacher.id for teacher in teachers]
+    descriptions = ['Science', 'History', 'English', 'Math']
+    
     for _ in range(4):
-        teacher_id= rc([teacher.id for teacher in teachers])
-        description = sample(['Science', 'History', 'English', 'Math'], 1)[0]
+        description = descriptions.pop(0)
+        teacher_id= teacher_ids.pop(0)
         course = Course(
             description=description,
             teacher_id=teacher_id)
@@ -68,8 +71,9 @@ def create_student_courses(students, courses):
     st_courses = []
     for student in students:
         # Get a random list of unique course IDs
-        course_ids = sample([course.id for course in courses], randint(1, len(courses)))
-
+        course_ids = sample([course.id for course in courses], 
+                            randint(1, len(courses)))
+        #ipdb.set_trace()
         for course_id in course_ids:
             student_course = StudentCourse(
                 student_id=student.id,
@@ -77,8 +81,8 @@ def create_student_courses(students, courses):
             )
             st_courses.append(student_course)
             
-    for student in students:
-        student.courses = [course for course in courses if course.id in [st_course.course_id for st_course in st_courses if st_course.student_id == student.id]]
+    #for student in students:
+    #    student.courses = [course for course in courses if course.id in [st_course.course_id for st_course in st_courses if st_course.student_id == student.id]]
 
 
     return st_courses
