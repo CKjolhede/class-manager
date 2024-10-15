@@ -16,6 +16,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 #    db.Column('student_id', db.Integer, db.ForeignKey('students.id'), primary_key=True),
 #    db.Column('assignment_id', db.Integer, db.ForeignKey('assignments.id'), primary_key=True)
 #)
+
 class StudentAssignment(db.Model, SerializerMixin):
     __tablename__ = 'student_assignments'
     id = db.Column(db.Integer, primary_key=True)
@@ -46,13 +47,13 @@ class Course(db.Model, SerializerMixin):
     __tablename__ = 'courses'
     id = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.String(300), nullable=False)
-    #one to manys
-    teacher_id = db.Column(db.Integer, db.ForeignKey('teachers.id'), nullable=False)
-    assignments = db.relationship('Assignment', backref='courses')
-    #many to many relationship
-    students = db.relationship('Student', secondary="student_courses", back_populates='courses') 
 
-    teachers = db.relationship('Teacher', back_populates='courses')
+    teacher_id = db.Column(db.Integer, db.ForeignKey('teachers.id'), nullable=False)
+    assignments = db.relationship('Assignment', backref='courses', cascade="all, delete-orphan")
+
+    students = db.relationship('Student', secondary="student_courses", back_populates='courses', cascade="all, delete-orphan") 
+
+    teachers = db.relationship('Teacher', back_populates='courses', cascade="all, delete-orphan")
     serializer_rules = ('-teacher.courses', '-teacher.assignments', '-assignments.courses', '-assignments.teachers')
 
     def __repr__(self):
@@ -67,18 +68,21 @@ class Student(db.Model, SerializerMixin):
     _password_hash = db.Column(db.String, nullable=False)
     email = db.Column(db.String(100), nullable=False)
     
-    assignments = db.relationship('Assignment', secondary='student_assignments', back_populates='students') 
-    courses = db.relationship('Course', secondary="student_courses", back_populates='students')
+    assignments = db.relationship('Assignment', secondary='student_assignments', back_populates='students', cascade="all, delete-orphan") 
+    courses = db.relationship('Course', secondary="student_courses", back_populates='students', cascade="all, delete-orphan")
 
     serializer_rules = ('-student_assignments.students', '-student_courses.students')
+    
     @validates('password')
     def validate_password(self, key, password):
         if not password:
             raise ValueError('Password cannot be left blank')
         return password
+    
     @hybrid_property
     def password_hash(self):
         return self._password_hash
+    
     @password_hash.setter
     def password_hash(self, password):
         password_hash = bcrypt.generate_password_hash(password.encode("utf8"))
@@ -86,7 +90,7 @@ class Student(db.Model, SerializerMixin):
     def authenticate(self, password):
         return bcrypt.check_password_hash(self._password_hash, password.encode("utf8"))
     def __repr__(self):
-        return f'<Student {self.first_name} {self.last_name}>'
+        return f'<Student_id: {self.id} | Student {self.first_name} {self.last_name} | Email: {self.email}>'
 
 ###############################################################################   
 class Teacher(db.Model, SerializerMixin):
@@ -96,7 +100,7 @@ class Teacher(db.Model, SerializerMixin):
     _password_hash = db.Column(db.String, nullable=False)
     email = db.Column(db.String(100), nullable=False)
     
-    courses = db.relationship('Course', back_populates='teachers', lazy=True)
+    courses = db.relationship('Course', back_populates='teachers', lazy=True, cascade="all, delete-orphan")
 
     serializer_rules = ('-courses.teachers')
     
@@ -105,18 +109,21 @@ class Teacher(db.Model, SerializerMixin):
         if not password:
             raise ValueError('Password cannot be left blank')
         return password
+    
     @hybrid_property
     def password_hash(self):
         return self._password_hash
+    
     @password_hash.setter
     def password_hash(self, password):
         password_hash = bcrypt.generate_password_hash(password.encode("utf8"))
         self._password_hash = password_hash.decode("utf8")
+        
     def authenticate(self, password):
         return bcrypt.check_password_hash(self._password_hash, password.encode("utf8"))
     
     def __repr__(self):
-        return f'<Teacher {self.name}>'
+        return f'<Teacher_id: {self.id} | Teacher Name: {self.name} | Email: {self.email} >'
 
 ################################################################################    
 class Assignment(db.Model, SerializerMixin):
@@ -125,10 +132,9 @@ class Assignment(db.Model, SerializerMixin):
     name = db.Column(db.String(100), nullable=False)
     points_possible = db.Column(db.Integer, nullable=True)
     description = db.Column(db.String, nullable=True)
-    #one to many
+
     course_id = db.Column(db.Integer, db.ForeignKey('courses.id'), nullable=False)
-    #many to many
-    students = db.relationship('Student', secondary='student_assignments', back_populates='assignments')
+    students = db.relationship('Student', secondary='student_assignments', back_populates='assignments', cascade="all, delete-orphan")
 
     def __repr__(self):
         return f'<Assignment: {self.name} | Points Possible: {self.points_possible} | Description:{self.description}>'

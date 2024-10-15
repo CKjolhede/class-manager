@@ -17,7 +17,7 @@ def create_teachers():
         name=fake.last_name()
         teacher = Teacher(
             name=name,
-            _password_hash="password",
+            password_hash="password",
             email=f'{name}@school.edu'
             )
         teachers.append(teacher)
@@ -31,7 +31,7 @@ def create_students():
             first_name=fake.first_name(), 
             last_name=last_name,
             email=f'{last_name}@school.edu', 
-            _password_hash="password"
+            password_hash="password"
             )
         students.append(student)
     return students
@@ -51,7 +51,7 @@ def create_courses(teachers):
 def create_assignments(courses):
     assignments = []
     course_ids = [course.id for course in courses]
-    for _ in range(100):
+    for _ in range(40):
         course_id = rc(course_ids)
         points_possible = rc([20, 50, 100])
         description = rc(['fill in the blanks with the correct word', 'write a brief summary of the article', 'select the correct answer for each questions'])
@@ -76,62 +76,72 @@ def create_student_courses(students, courses):
                 course_id=course_id
             )
             st_courses.append(student_course)
+            
+    for student in students:
+        student.courses = [course for course in courses if course.id in [st_course.course_id for st_course in st_courses if st_course.student_id == student.id]]
+
 
     return st_courses
-#def create_student_courses(students, courses):
-#    st_courses = []
-#    for _ in range(90):
-#        student_id = rc([student.id for student in students])
-#        course_id = rc([course.id for course in courses])
-#        student_course = StudentCourse(
-#            student_id=student_id,
-#            course_id=course_id
-#        )
-#        st_courses.append(student_course)
-#    return st_courses
-
-#def create_student_assignments(courses):
-#    st_assignments = []
-#    for _ in range(100):
-#        c = rc(list(courses))
-#        student_id = rc([student.id for student in c.students])
-#        assignment_id = rc([assignment.id for assignment in c.assignments])
-#        #ipdb.set_trace()
-#        student_assignment = StudentAssignment(
-#            student_id=student_id,
-#            assignment_id=assignment_id,
-#        )
-#        st_assignments.append(student_assignment)
-#    return st_assignments
 
 def assign_student_assignments(students, courses, assignments):
-    assigned_assignments = []
     student_assignments = []
 
-    for student in students:
-        for course in student.courses:
-            for _ in range(4):
-                available_assignments = [a.id for a in assignments if a.course_id == course.id and a.id not in assigned_assignments]
-                if len(available_assignments) < 4:
-                    # Skip the current iteration if there are not enough assignments available
-                    continue                
+    for course in courses:
+        # Get a list of assignments associated with the current course
+        course_assignments = [a for a in assignments if a.course_id == course.id]
 
-                assignment_id = rc(available_assignments)
-                assignment = next(a for a in assignments if a.id == assignment_id)
-                points_earned = rc(range(assignment.points_possible + 1))  # Random value between 0 and points_possible
+        for student in students:
+            # Check if the student is enrolled in the current course
+            if course in student.courses:
+                for assignment in course_assignments:
+                    points_earned = rc(range(assignment.points_possible + 1))  # Random value between 0 and points_possible
 
-                #assignment_id = rc([a.id for a in assignments if a.course_id == course.id and a.id not in assigned_assignments])
-                
-
-                student_assignment = StudentAssignment(
-                    student_id=student.id,
-                    assignment_id=assignment_id,
-                    points_earned=points_earned
-                )
-                assigned_assignments.append(assignment_id)
-                student_assignments.append(student_assignment)
+                    student_assignment = StudentAssignment(
+                        student_id=student.id,
+                        assignment_id=assignment.id,
+                        points_earned=points_earned
+                    )
+                    student_assignments.append(student_assignment)
 
     return student_assignments
+
+
+
+
+
+
+#def assign_student_assignments(students, courses, assignments):
+#    assigned_assignments = []
+#    student_assignments = []
+
+#    for student in students:
+#        for course in student.courses:
+#            for _ in range(4):
+#                available_assignments = [a.id for a in assignments if a.course_id == course.id and a.id not in assigned_assignments]
+#                if len(available_assignments) < 4:
+
+#                    continue                
+
+#                assignment_ids = sample(available_assignments, 4)
+
+#            for assignment_id in assignment_ids:
+#                #points_earned = rc(range(assignments[assignment_id].points_possible + 1))  
+
+#                student_assignment = StudentAssignment(
+#                    student_id=student.id,
+#                    assignment_id=assignment_id,
+#                    #points_earned=points_earned
+#                )
+#                assigned_assignments.append(assignment_id)
+#                student_assignments.append(student_assignment)
+
+#    return student_assignments
+
+
+                #assignment = next(a for a in assignments if a.id == assignment_id)
+                #points_earned = rc(range(assignment.points_possible + 1))  # Random value between 0 and points_possible
+
+                #assignment_id = rc([a.id for a in assignments if a.course_id == course.id and a.id not in assigned_assignments])
 
 
 
@@ -141,14 +151,14 @@ if __name__ == '__main__':
     fake = Faker()
     with app.app_context():
         
-        #print("Clearing Tables...")
-        #Teacher.query.delete()
-        #Course.query.delete()
-        #Student.query.delete()
-        #Assignment.query.delete()
-        #StudentAssignment.query.delete()
-        #StudentCourse.query.delete()
-        #print("Tables cleared!")
+        print("Clearing Tables...")
+        Teacher.query.delete()
+        Course.query.delete()
+        Student.query.delete()
+        Assignment.query.delete()
+        StudentAssignment.query.delete()
+        StudentCourse.query.delete()
+        print("Tables cleared!")
         
         print("Starting seed...")
         # Seed code goes here!
