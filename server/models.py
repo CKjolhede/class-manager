@@ -25,6 +25,9 @@ class StudentAssignment(db.Model, SerializerMixin):
     
     student_id = db.Column(db.Integer, db.ForeignKey('students.id'), nullable=False)
     assignment_id = db.Column(db.Integer, db.ForeignKey('assignments.id'), nullable=False)
+
+    #student = db.relationship('Student', back_populates='assignments')
+    #assignment = db.relationship('Assignment', back_populates='students')
     
     serializer_rules = ('-assignments.student_assignments', '-students.student_assignments')
     

@@ -185,7 +185,7 @@ class CoursebyId(Resource):
                 db.session.commit()
         return make_response(course.to_dict(only=["id", "description", "teacher_id"]), 200)
     
-class CoursebyTeacherId(Resource):
+class CoursesbyTeacherId(Resource):
     def get(self, teacher_id):
         courses = Course.query.filter(Course.teacher_id == teacher_id).all()
         return [course.to_dict(only=["id", "description", "teacher_id"]) for course in courses]
@@ -193,7 +193,7 @@ class CoursebyTeacherId(Resource):
 class CoursesbyStudentId(Resource):
     def get(self, student_id):
         courses = Course.query.join(StudentCourse).filter(StudentCourse.student_id == student_id).all()
-        return [course.to_dict(only=["id", "name"]) for course in courses]
+        return [course.to_dict(only=["id", "description", "teacher_id"]) for course in courses]
     
 ## ASSIGNMENTS #########################################################
 
@@ -243,13 +243,32 @@ class AssignmentsbyCourseId(Resource):
     
 class AssignmentsbyTeacherId(Resource):
     def get(self, teacher_id):
-        assignments = Assignment.query.filter(Assignment.teacher_id == teacher_id).all()
-        return [assignment.to_dict(only=["id", "name", "points_possible", "description"]) for assignment in assignments]
+        assignments = Assignment.query.join(Course).join(Teacher).filter(Course.teacher_id == teacher_id).all()
+ 
+        return [
+            assignment.to_dict(
+                only=["id", "name", "points_possible", "description", "course_id"]
+            )
+            for assignment in assignments
+        ] 
     
 class StudentAssignmentsbyTeacherId(Resource):
     def get(self, teacher_id):
-        assignments = StudentAssignment.query.filter(StudentAssignment.teacher_id == teacher_id).all()
-        return [assignment.to_dict(only=["id", "name", "points_possible", f'{assignment.course.points_earned} points_earned', "description"]) for assignment in assignments]
+        assignments = StudentAssignment.query.join(Student).join(StudentCourse).join(Course).join(Teacher).filter(Course.teacher_id == teacher_id).all()
+        
+        #points_earned = [assignment.points_earned for assignment in assignments]
+
+        #return [
+        #    {
+        #        "student_id": assignment.student_id,
+        #        "points_earned": assignment.points_earned,
+        #        "assignment": assignment.assignment.to_dict(only=["id", "name", "points_possible", "description"]),
+        #        "student_name": f"{assignment.student.first_name} {assignment.student.last_name}"
+        #    }
+        #    for assignment in assignments
+        #]
+
+        return [assignment.to_dict(only=["points_earned", "assignment_id", "student_id"]) for assignment in assignments]
 
 api.add_resource(Teachers, '/teachers')
 api.add_resource(TeacherbyId, '/teacher/<int:teacher_id>')
@@ -260,14 +279,14 @@ api.add_resource(StudentsbyAssignmentId, '/assignment/<int:assignment_id>/studen
 api.add_resource(StudentsbyTeacherId, '/teacher/<int:teacher_id>/students')
 api.add_resource(Courses, '/courses')
 api.add_resource(CoursebyId, '/course/<int:course_id>')
-api.add_resource(CoursebyTeacherId, '/teacher/<int:teacher_id>/courses')
+api.add_resource(CoursesbyTeacherId, '/teacher/<int:teacher_id>/courses')
 api.add_resource(CoursesbyStudentId, '/student/<int:student_id>/courses')
 api.add_resource(Assignments, '/assignments')
 api.add_resource(AssignmentbyId, '/assignment/<int:assignment_id>')
 api.add_resource(AssignmentsbyStudentId, '/student/<int:student_id>/assignments')
 api.add_resource(AssignmentsbyCourseId, '/course/<int:course_id>/assignments')
 api.add_resource(AssignmentsbyTeacherId, '/teacher/<int:teacher_id>/assignments')
-api.add_resource(StudentAssignmentsbyTeacherId, '/teachers/<int:teacher_id>/studentassignments')
+api.add_resource(StudentAssignmentsbyTeacherId, '/teacher/<int:teacher_id>/studentassignments')
 
 
 
