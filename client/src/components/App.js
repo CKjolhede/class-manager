@@ -1,8 +1,27 @@
-import React, { useEffect, useState } from "react";
-import { Switch, Route } from "react-router-dom";
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+import { useType } from "../contexts/TypeContext.js";
+import Login from "./Login";
+import Student from "./Student";
+import Teacher from "./Teacher";
+import Header from "./Header";
 
 function App() {
-  return <h1>Project Client</h1>;
+  const { user } = useAuth();
+  const { userType } = useType();
+  return (
+  
+      <>
+        <Header />
+      {
+        !user ? (
+            <Login /> ):
+        userType === "student" ? (
+              <Student />) :
+        userType === "teacher" ? (
+              <Teacher />) : null
+      }
+      </> );
 }
-
 export default App;
