@@ -26,8 +26,8 @@ class StudentAssignment(db.Model, SerializerMixin):
     student_id = db.Column(db.Integer, db.ForeignKey('students.id'), nullable=False)
     assignment_id = db.Column(db.Integer, db.ForeignKey('assignments.id'), nullable=False)
 
-    #student = db.relationship('Student', back_populates='assignments')
-    #assignment = db.relationship('Assignment', back_populates='students')
+    student = db.relationship('Student', back_populates='student_assignments')
+    assignment = db.relationship('Assignment', backref ='student_assignments')
     
     serializer_rules = ('-assignments.student_assignments', '-students.student_assignments')
     
@@ -78,6 +78,8 @@ class Student(db.Model, SerializerMixin):
     
     assignments = db.relationship('Assignment', secondary='student_assignments', back_populates='students') 
     courses = db.relationship('Course', secondary="student_courses", back_populates='students')
+    
+    student_assignments = db.relationship('StudentAssignment', back_populates='student')
 
     serializer_rules = ('-student_assignments.students', '-student_courses.students')
     
@@ -143,6 +145,7 @@ class Assignment(db.Model, SerializerMixin):
 
     course_id = db.Column(db.Integer, db.ForeignKey('courses.id'), nullable=False)
     students = db.relationship('Student', secondary='student_assignments', back_populates='assignments')
+    #student_assignments = db.relationship('StudentAssignment', back_populates='assignment')
 
     def __repr__(self):
         return f'<Assignment: {self.name} | Points Possible: {self.points_possible} | Description:{self.description}>'

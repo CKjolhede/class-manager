@@ -10,7 +10,7 @@ export const TypeProvider = ({ children }) => {
         useEffect(() => {
             const checkType = async () => {
                 const user_type = Cookies.get("user_type");
-                console.log(user_type)
+
                 setUserType(user_type);
             }; checkType();
         }, []);
