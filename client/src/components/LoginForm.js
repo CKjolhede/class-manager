@@ -4,11 +4,12 @@ import { useFormik } from "formik";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 
-export default function LoginTeacher() {
-
-    const [errors, setErrors] = useState([]);
-    const { login } = useAuth();
+export default function LoginForm() {
     const navigate = useNavigate();
+    const [errors, setErrors] = useState([]);
+
+    const { login } = useAuth();
+    
     const formik = useFormik({
         initialValues: {
             email: "",
@@ -41,6 +42,19 @@ export default function LoginTeacher() {
                     const user = await response.json();
                     login(user);
                     navigate("/teacher");
+                }  else if (response.status === 401 || response.status === 403) {
+                    const response = await fetch("/login-student", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(values),
+                    });
+                    if (response.ok) {
+                        const user = await response.json();
+                        login(user);
+                        navigate("/student");
+                    }
                 } else {
                     const errorData = await response.json();
                     setErrors(errorData.errors);
@@ -67,7 +81,7 @@ export default function LoginTeacher() {
                         }
                     }}
                 >
-                    <h3 className="login-header">Teacher Login</h3>
+                    {/*<h3 className="login-header"></h3>*/}
                     <div className="input-email">
                         E-mail
                         <input

@@ -24,6 +24,7 @@ export const AuthProvider = ({ children }) => {
     
     const login = (user) => {
         setAuth({ isLoggedIn: true, user });
+        console.log("at login", user)
         navigate("/");
     };
 
@@ -38,7 +39,7 @@ export const AuthProvider = ({ children }) => {
     };
     
     return (
-        <AuthContext.Provider value={{ auth, isLoggedIn: auth.isLoggedIn, user: auth.user, login, logout }}>
+        <AuthContext.Provider value={{ auth, isLoggedIn: auth.isLoggedIn, userType: auth.user?.userType, user: auth.user, login, logout }}>
             {children}
         </AuthContext.Provider>
     );

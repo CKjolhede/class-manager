@@ -3,12 +3,17 @@ import { useAuth } from "../contexts/AuthContext";
 //import { useType } from "../contexts/TypeContext";
 
 
-export default function CoursesTeacher() {
+export default function AssignmentsTeacher() {
     const { isLoggedIn, userType } = useAuth();
     //const { userType } = useType();
 
-
+    
+        //if (userType !== "teacher") {
+        //    return navigate("/unauthorized")
+        //}
     return (
-        <h1>Course</h1>
+        <h1>Assignments Teacher</h1>
     );
-}
+} 
+
+

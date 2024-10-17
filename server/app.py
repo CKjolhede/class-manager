@@ -22,10 +22,11 @@ def login_teacher():
     teacher = Teacher.query.filter(Teacher.email == email).first()
     if teacher and teacher.authenticate(password):
         session["user_id"] = teacher.id
-        session["user_type"] = "teacher"
-        return make_response(teacher.to_dict(only=["id", "name", "email"]), 200)
+        #session["user_type"] = "teacher"
+        teacher.userType = "teacher"
+        return make_response(teacher.to_dict(only=["id", "name", "email", "userType"]), 200)
     else:
-        raise Unauthorized
+        return make_response("Invalid teacher email or password", 401)
     
 @app.route("/login-student", methods=["POST"])
 def login_student():
@@ -36,18 +37,29 @@ def login_student():
 
     if student and student.authenticate(password):
         session["user_id"] = student.id
-        session["user_type"] = "student"
-        return make_response(student.to_dict(only=["id", "first_name", "last_name", "email"]), 200)
+        #session["user_type"] = "student"
+        student.userType = "student"
+        return make_response(student.to_dict(only=["id", "first_name", "last_name", "email", "userType"]), 200)
     else:
         raise Unauthorized
     
 @app.route("/authorized")
 def authorized():
+    #if session.get("user_id") and session.get("user_type"):
+    #    if session["user_type"] == "teacher":
+    #        user = Teacher.query.filter(Teacher.id == session["user_id"]).first()
+    #    elif session["user_type"] == "student":
+    #        user = Student.query.filter(Student.id == session["user_id"]).first()
+    #    if user:
+    #        return make_response({"user_type": session["user_type"], "user_info": user.to_dict()}, 200)
+    #return make_response("Unauthorized", 401)
+    #ipdb.set_trace()
     if user := Teacher.query.filter(Teacher.id == session.get("user_id")).first():
         return make_response({"user_type": "teacher", "user_info":user.to_dict()}, 200)
     elif user := Student.query.filter(Student.id == session.get("user_id")).first():
         return make_response({"user-type": "student", "user_info": user.to_dict()}, 200)
     else:
+        
         raise Unauthorized
     
 @app.route("/logout", methods=["DELETE"])

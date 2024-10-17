@@ -11,11 +11,11 @@ const root = createRoot(container);
 root.render(
     <Router>
         <AuthProvider>
-            <TypeProvider>
+            {/*<TypeProvider>*/}
                 <Routes>
                     <Route path="/*" element={<App />} />
                 </Routes>
-            </TypeProvider>       
+            {/*</TypeProvider>       */}
         </AuthProvider>
     </Router>
     );
