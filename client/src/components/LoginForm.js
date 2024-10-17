@@ -41,7 +41,7 @@ export default function LoginForm() {
                 if (response.ok) {
                     const user = await response.json();
                     login(user);
-                    navigate("/teacher");
+                    navigate("/courses");
                 }  else if (response.status === 401 || response.status === 403) {
                     const response = await fetch("/login-student", {
                         method: "POST",
@@ -53,7 +53,7 @@ export default function LoginForm() {
                     if (response.ok) {
                         const user = await response.json();
                         login(user);
-                        navigate("/student");
+                        navigate("/courses");
                     }
                 } else {
                     const errorData = await response.json();

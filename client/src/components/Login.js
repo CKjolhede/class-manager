@@ -4,7 +4,7 @@ import LoginForm from './LoginForm';
 export default function Login() {
     return (
         <><h1>Login</h1>
-            <dir className="login-teacher">
+            <dir className="login">
                 <LoginForm />
             </dir>        
         </>

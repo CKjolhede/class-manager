@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAuth } from "../contexts/AuthContext";
-import CoursesTeacher from "./CoursesTeacher";
+import CoursesTeacher from "./Courses.js";
 import Students from "./Students";
 import AssignmentsTeacher from "./AssignmentsTeacher.js";
 import { Routes, Route } from "react-router-dom";

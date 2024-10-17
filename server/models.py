@@ -76,7 +76,7 @@ class Student(db.Model, SerializerMixin):
     _password_hash = db.Column(db.String, nullable=False)
     email = db.Column(db.String(100), nullable=False)
     
-    assignments = db.relationship('Assignment', secondary='student_assignments', back_populates='students') 
+    #assignments = db.relationship('Assignment', secondary='student_assignments', back_populates='students') 
     courses = db.relationship('Course', secondary="student_courses", back_populates='students')
     
     student_assignments = db.relationship('StudentAssignment', back_populates='student')
@@ -144,7 +144,7 @@ class Assignment(db.Model, SerializerMixin):
     description = db.Column(db.String, nullable=True)
 
     course_id = db.Column(db.Integer, db.ForeignKey('courses.id'), nullable=False)
-    students = db.relationship('Student', secondary='student_assignments', back_populates='assignments')
+    #students = db.relationship('Student', secondary='student_assignments', back_populates='assignments')
     #student_assignments = db.relationship('StudentAssignment', back_populates='assignment')
 
     def __repr__(self):

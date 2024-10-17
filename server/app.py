@@ -55,9 +55,9 @@ def authorized():
     #return make_response("Unauthorized", 401)
     #ipdb.set_trace()
     if user := Teacher.query.filter(Teacher.id == session.get("user_id")).first():
-        return make_response({"user_type": "teacher", "user_info":user.to_dict()}, 200)
+        return make_response({"user_info" : user.to_dict()}, 200)
     elif user := Student.query.filter(Student.id == session.get("user_id")).first():
-        return make_response({"user-type": "student", "user_info": user.to_dict()}, 200)
+        return make_response({user.userType: "student", "user_info": user.to_dict()}, 200)
     else:
         
         raise Unauthorized
@@ -177,7 +177,9 @@ class CoursebyId(Resource):
         if course := Course.query.filter(Course.id == course_id).first():
             teacher = Teacher.query.filter(Teacher.id == course.teacher_id).first()
             teacher_name = f"{teacher.name}"
-            return ((course.to_dict(only=["id", "description", "teacher_id"]), f'teacher_name: {teacher_name}'), 200) 
+            return ((course.to_dict(only=["id", "description", "teacher_id"]), 
+                     teacher_name
+                    ), 200) 
         else:
             raise NotFound
         
@@ -307,7 +309,7 @@ api.add_resource(StudentsbyCourseId, '/course/<int:course_id>/students')
 api.add_resource(StudentsbyAssignmentId, '/assignment/<int:assignment_id>/students')
 api.add_resource(StudentsbyTeacherId, '/teacher/<int:teacher_id>/students')
 api.add_resource(Courses, '/courses')
-api.add_resource(CoursebyId, '/course/<int:course_id>')
+api.add_resource(CoursebyId, '/courses/<int:course_id>')
 api.add_resource(CoursesbyTeacherId, '/teacher/<int:teacher_id>/courses')
 api.add_resource(CoursesbyStudentId, '/student/<int:student_id>/courses')
 api.add_resource(Assignments, '/assignments')
