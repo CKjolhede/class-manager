@@ -1,8 +1,32 @@
-import React, { useEffect, useState } from "react";
-import { Switch, Route } from "react-router-dom";
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+import Login from "./Login";
+import Home from "./Home";
+import Courses from "./Courses.js";
+import Header from "./Header";
 
 function App() {
-  return <h1>Project Client</h1>;
-}
+  const { user } = useAuth();
 
+
+  return (
+      <>
+          <Header />
+          {user ? (
+              <>
+            <Routes>
+                <Route exact path="/*" element={<Home />} />
+            </Routes>
+          {/*<Courses />*/}
+              </>
+          ) : (
+              <Routes>
+                  <Route path="/" element={<Login />} />
+              </Routes>
+      )}
+      
+      </>
+  );
+}
 export default App;
