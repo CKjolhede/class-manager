@@ -5,12 +5,12 @@ import EditAssignment from './EditAssignment';
 import { Routes, Route } from "react-router-dom";
 
 export default function Assignment() {
-    const { user } = useAuth();
+    const { user, userType } = useAuth();
     const { assignmentId, courseId } = useParams();
     const [assignment, setAssignment] = useState([]);
     console.log(assignment)
 
-    useEffect(() => { 
+    useEffect(() => {
         const fetchAssignment = async () => {
             try {
                 const response = await fetch(`/assignment/${assignmentId}`);
@@ -22,7 +22,7 @@ export default function Assignment() {
                 console.error("Error:", error);
             }
         };
-        fetchAssignment();    
+        fetchAssignment();
     }, [assignmentId])
     
     const handleAssignmentUpdate = async (updatedAssignment) => {
@@ -47,9 +47,6 @@ export default function Assignment() {
     
     return (
         <>
-            <Routes>
-                <Route path="/edit" element={<EditAssignment assignment={assignment} handleAssignmentUpdate={handleAssignmentUpdate} />} />
-            </Routes>
             <h1>Assignment</h1>
             {assignment && (
                 <h1>
@@ -57,11 +54,16 @@ export default function Assignment() {
                     <br /> Description: {assignment.description}
                     <br /> Points Possible: {assignment.points_possible}
                 </h1>)}
-            <NavLink
-                to={`/course/${courseId}/assignment/${assignment.id}/edit`}
-            >
-                Edit
-            </NavLink>
+            {userType === "teacher" ? (
+                <div>
+                    <NavLink to={`/course/${courseId}/assignment/${assignment.id}/edit`}>
+                    Edit
+                    </NavLink>
+                    < Routes >
+                        <Route path="/edit" element={<EditAssignment assignment={assignment} handleAssignmentUpdate={handleAssignmentUpdate} />} />
+                    </Routes >
+                </div>) : null}
+
             
         </>
     );
