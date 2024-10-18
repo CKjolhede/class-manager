@@ -7,26 +7,26 @@ import Courses from "./Courses.js";
 import Header from "./Header";
 
 function App() {
-  const { user } = useAuth();
+    const { user } = useAuth();
 
 
-  return (
-      <>
-          <Header />
-          {user ? (
-              <>
-            <Routes>
-                <Route exact path="/*" element={<Home />} />
-            </Routes>
-          {/*<Courses />*/}
-              </>
-          ) : (
-              <Routes>
-                  <Route path="/" element={<Login />} />
-              </Routes>
-      )}
-      
-      </>
-  );
+    return (
+        <>
+            <Header />
+            {user ? (
+                <>
+                <Routes>
+                    <Route exact path="/*" element={<Home />} />
+                </Routes>
+            {/*<Courses />*/}
+                </>
+            ) : (
+                <Routes>
+                    <Route path="/" element={<Login />} />
+                </Routes>
+        )}
+        
+        </>
+    );
 }
 export default App;

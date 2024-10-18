@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from "react";
-//import { useAuth } from "../contexts/AuthContext";
-import { useParams } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+import { useParams, NavLink, Routes, Route } from "react-router-dom";
+import Students from "./Students";
+import Assignments from "./Assignments";
+import Assignment from "./Assignment";
 
 export default function Course() {
     
     const { courseId } = useParams();
-    console.log("courseId", courseId)
     const [course, setCourse] = useState(null);
-    console.log("course", course)
+    const { userType } = useAuth();
+
     useEffect(() => {
         const fetchCourse = async () => {
             try {
@@ -15,7 +18,6 @@ export default function Course() {
                 const response = await fetch(url);
                 if (response.ok) {
                     const data = await response.json()
-                    console.log("fetched course", data)
                     setCourse({
                         description: data[0].description,
                         id: data[0].id,
@@ -31,18 +33,35 @@ export default function Course() {
 
         fetchCourse();
     }, [courseId]);
-
+    
     if (!course) {
         return <div>Loading...</div>;
     }
-    console.log('right before returning course', course.description)
+    console.log ("course usertype:", userType)
     return (
+        <>
         <div>
-            <ul>
-            <li style={{ color: "red" }}>{course.description}</li>
-            {course.id }
-            {course.teacher_name}
-            {course.teacher_id }
-        </ul></div>
+            <h1 style={{ paddingTop: "2.5em" }}>{course.id} - {course.description}</h1>
+            <h2>Teacher: {course.teacher_name}</h2>
+
+        <NavLink to={`/course/${courseId}/assignments`}>Assignments</NavLink>
+            <Routes>    
+                    <Route exact path="/assignments/* " element={<Assignments />} />
+                    <Route exact path="/assignment/:assignmentId/*" element={<Assignment />} />
+            </Routes>
+            <Assignments />
+                    <br />
+
+        {userType === "teacher" ?
+            <>
+            <NavLink to={`/course/${courseId}/students`}>Students</NavLink>
+                    <Routes>
+                        <Route exact path="/students/*" element={<Students />} />
+                        </Routes>
+                </> : null
+            }
+
+        </div>
+        </>
     );
 }
