@@ -53,7 +53,6 @@ def authorized():
     #    if user:
     #        return make_response({"user_type": session["user_type"], "user_info": user.to_dict()}, 200)
     #return make_response("Unauthorized", 401)
-    #ipdb.set_trace()
     if user := Teacher.query.filter(Teacher.id == session.get("user_id")).first():
         return make_response({"user_info" : user.to_dict()}, 200)
     elif user := Student.query.filter(Student.id == session.get("user_id")).first():
@@ -151,13 +150,18 @@ class StudentsbyCourseId(Resource):
     
 class StudentsbyAssignmentId(Resource):
     def get(self, assignment_id):
-        #ipdb.set_trace()
-        students = Student.query.join(StudentAssignment).filter(StudentAssignment.assignment_id == assignment_id).all()
-        #assignment = Assignment.query.filter(Assignment.id == assignment_id).first()
+        studentassignments = StudentAssignment.query.join(Student).filter(StudentAssignment.assignment_id == assignment_id).all()
+        
+        return [[
+            {
+                "student_id": studentassignment.student_id,
+                "student_name": f"{studentassignment.student.first_name} {studentassignment.student.last_name}",
+                "points_earned": {studentassignment.points_earned},
+                "total_points_possible": {studentassignment.assignment.points_possible}
+            }
+            for studentassignment in studentassignments]
+        ]
 
-        return (
-            #[assignment.to_dict(only=["id", "name", "points_possible"])], 
-            [student.to_dict(only=["id", "first_name", "last_name", "email"]) for student in students], 200) 
     
 ## COURSES ###########################################################
 
@@ -178,7 +182,7 @@ class CoursebyId(Resource):
             teacher = Teacher.query.filter(Teacher.id == course.teacher_id).first()
             teacher_name = f"{teacher.name}"
             return ((course.to_dict(only=["id", "description", "teacher_id"]), 
-                     teacher_name
+                teacher_name
                     ), 200) 
         else:
             raise NotFound
@@ -225,7 +229,12 @@ class Assignments(Resource):
 class AssignmentbyId(Resource):
     def get(self, assignment_id):
         if assignment := Assignment.query.filter(Assignment.id == assignment_id).first():
-            return assignment.to_dict(only=["id", "name", "points_possible", "description"])
+            #ipdb.set_trace()   
+            return {
+                "id": assignment.id,
+                "name": f"{assignment.name}",
+                "points_possible": f"{assignment.points_possible}", 
+                "description": f"{assignment.description}"}
         else:
             raise NotFound
         
@@ -287,7 +296,6 @@ class StudentAssignmentsbyTeacherId(Resource):
         assignments = StudentAssignment.query.join(Student).join(StudentCourse).join(Course).join(Teacher).filter(Course.teacher_id == teacher_id).all()
         points_earned = [assignment.points_earned for assignment in assignments]
 
-        #ipdb.set_trace()
         return [
             {
                 "student_id": assignment.student_id,

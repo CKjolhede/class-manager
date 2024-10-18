@@ -1,15 +1,68 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from "../contexts/AuthContext";
-import { useType } from "../contexts/TypeContext";
-import { useNavigate } from "react-router-dom";
-
+import { NavLink, useParams } from 'react-router-dom';
+import EditAssignment from './EditAssignment';
+import { Routes, Route } from "react-router-dom";
 
 export default function Assignment() {
-    const { isLoggedIn } = useAuth();
-    //const { userType } = useType();
-    const navigate = useNavigate();
+    const { user } = useAuth();
+    const { assignmentId, courseId } = useParams();
+    const [assignment, setAssignment] = useState([]);
+    console.log(assignment)
+
+    useEffect(() => { 
+        const fetchAssignment = async () => {
+            try {
+                const response = await fetch(`/assignment/${assignmentId}`);
+                if (response.ok) {
+                    const assignment = await response.json();
+                    setAssignment(assignment);
+                }
+            } catch (error) {
+                console.error("Error:", error);
+            }
+        };
+        fetchAssignment();    
+    }, [assignmentId])
+    
+    const handleAssignmentUpdate = async (updatedAssignment) => {
+        setAssignment(updatedAssignment);
+    }
+    
+    //useEffect(() => { 
+    //    const fetchStudentAssignments = async () => {
+    //        try {
+    //            const response = await fetch(`/assignment/${assignmentId}/students`);
+    //            if (response.ok) {
+    //                const studentassignments = await response.json();
+    //                setStudentAssignments(studentassignments);
+    //            }
+    //        } catch (error) {
+    //            console.error("Error:", error);
+    //        }
+    //    };
+    //    fetchStudentAssignments();    
+    //},[assignmentId])
+
     
     return (
-        <h1>Assignment</h1>
+        <>
+            <Routes>
+                <Route path="/edit" element={<EditAssignment assignment={assignment} handleAssignmentUpdate={handleAssignmentUpdate} />} />
+            </Routes>
+            <h1>Assignment</h1>
+            {assignment && (
+                <h1>
+                    Assignnment: {assignment.name}
+                    <br /> Description: {assignment.description}
+                    <br /> Points Possible: {assignment.points_possible}
+                </h1>)}
+            <NavLink
+                to={`/course/${courseId}/assignment/${assignment.id}/edit`}
+            >
+                Edit
+            </NavLink>
+            
+        </>
     );
 }

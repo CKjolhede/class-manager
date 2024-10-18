@@ -35,7 +35,7 @@ export const AuthProvider = ({ children }) => {
             setAuth({ isLoggedIn: false, user: null });
             navigate("/");
         }
-
+    
     };
     
     return (
