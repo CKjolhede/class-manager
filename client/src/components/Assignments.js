@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from "../contexts/AuthContext";
+//import { useAuth } from "../contexts/AuthContext";
 import { useParams, NavLink } from "react-router-dom";
 
 export default function AssignmentsTeacher() {
-    const { userType } = useAuth();
+    //const { user } = useAuth();
     const { courseId } = useParams();
     const [courseAssignments, setCourseAssignments] = useState([]);
 

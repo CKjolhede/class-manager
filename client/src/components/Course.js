@@ -57,7 +57,7 @@ export default function Course() {
             <NavLink to={`/course/${courseId}/students`}>Students</NavLink>
                     <Routes>
                         <Route exact path="/students/*" element={<Students />} />
-                        </Routes>
+                    </Routes>
                 </> : null
             }
 

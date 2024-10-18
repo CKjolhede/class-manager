@@ -5,7 +5,7 @@ import EditAssignment from './EditAssignment';
 import { Routes, Route } from "react-router-dom";
 
 export default function Assignment() {
-    const { user, userType } = useAuth();
+    const { userType } = useAuth();
     const { assignmentId, courseId } = useParams();
     const [assignment, setAssignment] = useState([]);
     console.log(assignment)
