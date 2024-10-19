@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from "../contexts/AuthContext";
 import { NavLink, Routes, Route, useParams } from 'react-router-dom';
+import Header from './Header';
+import Sidebar from './Sidebar';
+import Course from './Course';
 
 
 export default function Courses() {
@@ -27,13 +30,16 @@ export default function Courses() {
         
     return (
         <>
-
+          
             <h1>Courses</h1>
             <div className="courses">
                 <ul>
                     {courses?.map((course) => (
                         <li key={course.id}>
-                            <NavLink to={"../course/" + course.id} params={{courseId: course.id}}>
+                            <NavLink
+                                to={"../course/" + course.id}
+                                params={{ courseId: course.id }}
+                            >
                                 {course.description}
                             </NavLink>
                         </li>

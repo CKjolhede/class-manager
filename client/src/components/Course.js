@@ -4,6 +4,7 @@ import { useParams, NavLink, Routes, Route } from "react-router-dom";
 import Students from "./Students";
 import Assignments from "./Assignments";
 import Assignment from "./Assignment";
+import Header from "./Header";
 
 export default function Course() {
     
@@ -37,28 +38,28 @@ export default function Course() {
     if (!course) {
         return <div>Loading...</div>;
     }
-    console.log ("course usertype:", userType)
     return (
         <>
-        <div>
-            <h1 style={{ paddingTop: "2.5em" }}>{course.id} - {course.description}</h1>
-            <h2>Teacher: {course.teacher_name}</h2>
-
-        <NavLink to={`/course/${courseId}/assignments`}>Assignments</NavLink>
+            {/*<Assignments />*/}
             <Routes>    
-                    <Route exact path="/assignments/* " element={<Assignments />} />
-                    <Route exact path="/assignment/:assignmentId/*" element={<Assignment />} />
+                    <Route path="/assignments/* " element={<Assignments />} />
+                    {/*<Route path="/assignment/:assignmentId/*" element={<Assignment />} />*/}
             </Routes>
-            <Assignments />
-                    <br />
+            <div>
+                <h1 >{course.id} - {course.description}</h1>
+            <h2>Teacher: {course.teacher_name}</h2>
+            {/*<NavLink to={'/home'}>Home</NavLink><br />
+            <NavLink to={`/`}>Courses</NavLink><br />*/}
+            <NavLink to={`/course/${courseId}/assignments`}>Assignments</NavLink>
 
-        {userType === "teacher" ?
-            <>
+            {userType === "teacher" ?
+        <>
             <NavLink to={`/course/${courseId}/students`}>Students</NavLink>
-                    <Routes>
-                        <Route exact path="/students/*" element={<Students />} />
-                    </Routes>
-                </> : null
+            <Routes>
+                <Route exact path="/students/*" element={<Students />} />
+                        </Routes>
+                        
+        </> : null
             }
 
         </div>

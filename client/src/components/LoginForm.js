@@ -41,8 +41,9 @@ export default function LoginForm() {
                 if (response.ok) {
                     const user = await response.json();
                     login(user);
-                    navigate("/courses");
-                }  else if (response.status === 401 || response.status === 403) {
+                    navigate("/");
+                }
+                else if (response.status === 401 || response.status === 403) {
                     const response = await fetch("/login-student", {
                         method: "POST",
                         headers: {
@@ -53,9 +54,11 @@ export default function LoginForm() {
                     if (response.ok) {
                         const user = await response.json();
                         login(user);
-                        navigate("/courses");
+                        navigate("/");
                     }
-                } else {
+                }
+                else {
+                    console.log(response)
                     const errorData = await response.json();
                     setErrors(errorData.errors);
                 }
@@ -63,7 +66,7 @@ export default function LoginForm() {
                 setErrors([
                     {
                         message:
-                            "You have entered an invalid email or password.",
+                            "FUCK You have entered an invalid email or password.",
                     },
                 ]);
             }

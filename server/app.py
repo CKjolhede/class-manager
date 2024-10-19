@@ -20,6 +20,7 @@ def login_teacher():
     password = request.get_json()["password"]
 
     teacher = Teacher.query.filter(Teacher.email == email).first()
+    
     if teacher and teacher.authenticate(password):
         session["user_id"] = teacher.id
         #session["user_type"] = "teacher"
@@ -42,9 +43,37 @@ def login_student():
         return make_response(student.to_dict(only=["id", "first_name", "last_name", "email", "userType"]), 200)
     else:
         raise Unauthorized
-    
+
+#@app.route("/login", methods=["POST"])
+#def login():
+#    data = request.get_json()
+#    email, password = data["email"], data["password"]
+
+#    for UserModel in [Teacher, Student]:
+#        user = UserModel.query.filter(UserModel.email == email).first()
+#        #ipdb.set_trace()
+#        session["user_id"] = user.id
+#        if user and user.authenticate(password):
+#            user.userType = "teacher" if UserModel == Teacher else "student"
+#            return make_response(user.to_dict(only=[
+#                "id", "name", "userType" if UserModel == Teacher else "first_name", "last_name", "email", "userType"
+#                ]), 200)
+
+#    raise Unauthorized
+
 @app.route("/authorized")
 def authorized():
+    user_id = session.get("user_id")
+    if not user_id:
+        raise Unauthorized
+
+    for UserModel in [Student, Teacher]:
+            if user := UserModel.query.filter(UserModel.id == user_id).first():
+                return make_response({"user_info": user.to_dict()}, 200)
+
+    raise Unauthorized
+#@app.route("/authorized")
+#def authorized():
     #if session.get("user_id") and session.get("user_type"):
     #    if session["user_type"] == "teacher":
     #        user = Teacher.query.filter(Teacher.id == session["user_id"]).first()
@@ -53,13 +82,14 @@ def authorized():
     #    if user:
     #        return make_response({"user_type": session["user_type"], "user_info": user.to_dict()}, 200)
     #return make_response("Unauthorized", 401)
-    if user := Teacher.query.filter(Teacher.id == session.get("user_id")).first():
-        return make_response({"user_info" : user.to_dict()}, 200)
-    elif user := Student.query.filter(Student.id == session.get("user_id")).first():
-        return make_response({user.userType: "student", "user_info": user.to_dict()}, 200)
-    else:
+    #ipdb.set_trace()
+    #if user := Teacher.query.filter(Teacher.id == session.get("user_id")).first():
+    #    return make_response({"user_info" : user.to_dict()}, 200)
+    #elif user := Student.query.filter(Student.id == session.get("user_id")).first():
+    #    return make_response({"user_info": user.to_dict()}, 200)
+    #else:
         
-        raise Unauthorized
+    #    raise Unauthorized
     
 @app.route("/logout", methods=["DELETE"])
 def logout():
@@ -272,12 +302,12 @@ class AssignmentsbyStudentId(Resource):
     
 class AssignmentsbyCourseId(Resource):
     def get(self, course_id):
-        assignments = Assignment.query.filter(Assignment.course_id == course_id).all()
+        assignments = Assignment.query.join(StudentAssignment).filter(Assignment.course_id == course_id).all()
         return [assignment.to_dict(only=["id", "name", "points_possible", "description"]) for assignment in assignments]
     
 class AssignmentsbyTeacherId(Resource):
     def get(self, teacher_id):
-        assignments = Assignment.query.join(Course).join(Teacher).filter(Course.teacher_id == teacher_id).all()
+        assignments = Assignment.query.join(Course).filter(Course.teacher_id == teacher_id).all()
 
         return [
             {

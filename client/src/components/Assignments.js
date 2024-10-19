@@ -23,21 +23,29 @@ export default function AssignmentsTeacher() {
     },[courseId])
     
     return (
-
-        <ul>
-            {courseAssignments?.map((assignment) => (
-            <li key={assignment.id}>
-                <NavLink to={`/course/${courseId}/assignment/${assignment.id}`}>
-                    {assignment.name}
-                    </NavLink>
-                <ul>
-                    {/*<li>{assignment.points_possible} points possible </li>*/}
-
-                </ul>   
-                
-            </li>))}
-        </ul>    
-        );
+        <>
+            {/*<NavLink to={"/home"}>Home</NavLink>
+            <br />
+            <NavLink to={`/courses`}>Courses</NavLink>
+            <br />*/}
+            <ul>
+                {courseAssignments?.map((assignment) => (
+                    <li key={assignment.id}>
+                        <NavLink
+                            to={`/course/${courseId}/assignment/${assignment.id}`}
+                        >
+                            {assignment.name}
+                        </NavLink>
+                        <ul>
+                            <li>
+                                {assignment.points_possible} points possible{" "}
+                            </li>
+                        </ul>
+                    </li>
+                ))}
+            </ul>
+        </>
+    );
 }
 
 

@@ -7,8 +7,8 @@ export default function Header() {
 
     return (
         <div className="header">
-            <h1 style={{ float: "left" }}>Header</h1>
-            {/*<h1 style={{ float: "left", color: "red" }}></h1>*/}
+            {/*<h1 style={{ float: "left" }}>Class Manager</h1>*/}
+            <h1 style={{ float: "left" }}>{userType === "teacher" ? user.name : userType === "student" ?  user.first_name + " " + user.last_name  : "Class Manager"}</h1>
             <NavLink style={{ float: "right", fontSize: "20px", paddingRight: "10em" }} to="/" onClick={logout}>
                 Logout
             </NavLink>

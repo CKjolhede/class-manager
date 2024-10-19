@@ -23,8 +23,7 @@ export const AuthProvider = ({ children }) => {
     }, []);
     
     const login = (user) => {
-        setAuth({ isLoggedIn: true, user });
-        console.log("at login", user)
+        setAuth({ isLoggedIn: true, user: user });
         navigate("/");
     };
 
