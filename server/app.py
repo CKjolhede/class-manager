@@ -333,10 +333,42 @@ class StudentAssignments(Resource):
         db.session.commit()
         return assignment.to_dict(only=["points_earned", "assignment_id", "student_id"]), 201
     
+class StudentAssignmentbyId(Resource):
+    def get(self, studentassignment_id):
+        if studentassignment := StudentAssignment.query.join(Student).filter(StudentAssignment.id == studentassignment_id).first():
+            return studentassignment.to_dict(
+                {
+                    "id": studentassignment.id,
+                    "points_earned": studentassignment.points_earned,
+                    "assignment_id": studentassignment.assignment_id,
+                    "student_id": studentassignment.student_id,
+                    "student_name": f"{studentassignment.student.first_name} {studentassignment.student.last_name}"
+                }
+            )
+        else:
+            raise NotFound
+        
+    def patch(self, studentassignment_id):
+        if not (studentassignment := StudentAssignment.query.join(Student).filter(StudentAssignment.id == studentassignment_id).first()):
+            raise NotFound   
+
+        for key, value in request.get_json().items():
+                setattr(studentassignment, key, value)
+                db.session.commit()
+        #ipdb.set_trace()
+        return make_response({
+                    "id": studentassignment.id,
+                    "points_earned": studentassignment.points_earned,
+                    "assignment_id": studentassignment.assignment_id,
+                    "student_id": studentassignment.student_id,
+                    "student_name": f"{studentassignment.student.first_name} {studentassignment.student.last_name}"
+            }, 200)
+    
 class StudentAssignmentsbyAssignmentId(Resource):
     def get(self, assignment_id):
         studentassignments = StudentAssignment.query.join(Student).filter(StudentAssignment.assignment_id == assignment_id).all()
         return [{
+            "id": studentassignment.id,
             "points_earned": studentassignment.points_earned,
             "student_id": studentassignment.student_id,
             "assignment_id": studentassignment.assignment_id,
@@ -384,6 +416,7 @@ api.add_resource(StudentAssignmentsbyTeacherId, '/teacher/<int:teacher_id>/stude
 api.add_resource(StudentAssignmentsbyAssignmentId, '/assignment/<int:assignment_id>/studentassignments')
 api.add_resource(StudentAssignmentsbyStudentId, '/student/<int:student_id>/studentassignments')
 api.add_resource(StudentAssignments, '/studentassignments')
+api.add_resource(StudentAssignmentbyId, '/studentassignment/<int:studentassignment_id>')
 #api.add_resource(StudentAssignmentsbyCourseId, '/course/<int:course_id>/studentassignments/<int:student_id>')
 
 
