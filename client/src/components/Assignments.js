@@ -7,7 +7,7 @@ export default function AssignmentsTeacher() {
     const { courseId } = useParams();
     const [courseAssignments, setCourseAssignments] = useState([]);
     const [studentAssignments, setStudentAssignments] = useState([]);
-
+    console.log("studentassignments from assignments", studentAssignments)
     
     useEffect(() => {
         const fetchStudentAssignments = async () => {
@@ -39,22 +39,6 @@ export default function AssignmentsTeacher() {
         fetchCourseAssignments();
     }, [courseId]);
     
-    //useEffect(() => {
-    //    const fetchStudentCourseAssignments = async () => {
-    //        try {
-    //            const response = await fetch(`/course/${courseId}/studentassignments/${user.id}`);
-    //            if (response.ok) {
-    //                const data = await response.json();
-    //                setStudentCourseAssignments(data);
-    //            }
-    //        } catch (error) {
-    //            console.error("Error:", error);
-    //        }
-    //    }
-        
-    //    fetchStudentCourseAssignments();
-    //}, [courseId, user.id]);
-    
     
     const pointsEarned = (assignmentid) => {
         const studentAssignment = studentAssignments?.find(
@@ -81,8 +65,6 @@ export default function AssignmentsTeacher() {
         const sum = earnedPoints?.reduce((acc, curr) => acc + curr, 0);
         return sum || 0;
     };
-    
-
 
     return (
         <>
