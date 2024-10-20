@@ -2,10 +2,11 @@ import React from 'react';
 import { NavLink, useParams } from 'react-router-dom';
 import { useAuth } from "../contexts/AuthContext";
 
+
 export default function Sidebar() {
-    const { courseId } = useParams();
+    const { courseId} = useParams();
     const { userType } = useAuth();
-    console.log("sidebar courseId", courseId)
+    console.log("sidebar courseId",courseId)
     return (
         <div className="sidebar">
             <NavLink to="/home">Home</NavLink><br />

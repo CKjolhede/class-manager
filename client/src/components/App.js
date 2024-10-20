@@ -6,7 +6,6 @@ import Home from "./Home";
 //import Courses from "./Courses";
 //import Course from "./Course";
 import Header from "./Header";
-import Sidebar from "./Sidebar";
 
 function App() {
     const { user } = useAuth();

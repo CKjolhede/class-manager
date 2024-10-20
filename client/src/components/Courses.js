@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from "../contexts/AuthContext";
 import { NavLink, Routes, Route, useParams } from 'react-router-dom';
-import Header from './Header';
-import Sidebar from './Sidebar';
-import Course from './Course';
+//import Header from './Header';
+//import Course from './Course';
 
 
 export default function Courses() {

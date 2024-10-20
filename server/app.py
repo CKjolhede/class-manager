@@ -303,7 +303,7 @@ class AssignmentsbyStudentId(Resource):
 class AssignmentsbyCourseId(Resource):
     def get(self, course_id):
         assignments = Assignment.query.join(StudentAssignment).filter(Assignment.course_id == course_id).all()
-        return [assignment.to_dict(only=["id", "name", "points_possible", "description"]) for assignment in assignments]
+        return [assignment.to_dict(only=["id", "name", "points_possible", "description", "course_id"]) for assignment in assignments]
     
 class AssignmentsbyTeacherId(Resource):
     def get(self, teacher_id):
@@ -336,8 +336,24 @@ class StudentAssignmentsbyTeacherId(Resource):
             }
             for assignment in assignments
         ]
-
-        #return [assignment.to_dict(only=["points_earned", "assignment_id", "student_id"]) for assignment in assignments]
+    
+#class StudentAssignmentsbyCourseId(Resource):
+#    def get(self, course_id, student_id):
+#        student_assignments = StudentAssignment.query.join(Student).join(StudentCourse).filter(StudentAssignment.student_id == student_id and StudentCourse.student_id == student_id and StudentCourse.course_id == course_id).all()
+#        return [ {
+#            "student_id": assignment.student_id,
+#            "assignment_name": f"{assignment.assignment.name}",
+#            "points_earned": assignment.points_earned,
+#            "points_possible": int(f"{assignment.assignment.points_possible}"), 
+#            "student_name": f"{assignment.student.first_name} {assignment.student.last_name}"
+#        }
+#            for assignment in student_assignments
+#        ]
+    
+class StudentAssignmentsbyStudentId(Resource):
+    def get(self, student_id):
+        student_assignments = StudentAssignment.query.filter(StudentAssignment.student_id == student_id).all()
+        return [assignment.to_dict(only=["points_earned", "assignment_id", "student_id"]) for assignment in student_assignments]
 
 api.add_resource(Teachers, '/teachers')
 api.add_resource(TeacherbyId, '/teacher/<int:teacher_id>')
@@ -356,6 +372,8 @@ api.add_resource(AssignmentsbyStudentId, '/student/<int:student_id>/assignments'
 api.add_resource(AssignmentsbyCourseId, '/course/<int:course_id>/assignments')
 api.add_resource(AssignmentsbyTeacherId, '/teacher/<int:teacher_id>/assignments')
 api.add_resource(StudentAssignmentsbyTeacherId, '/teacher/<int:teacher_id>/studentassignments')
+api.add_resource(StudentAssignmentsbyStudentId, '/student/<int:student_id>/studentassignments')
+#api.add_resource(StudentAssignmentsbyCourseId, '/course/<int:course_id>/studentassignments/<int:student_id>')
 
 
 

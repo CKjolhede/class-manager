@@ -7,7 +7,6 @@ import Assignment from "./Assignment";
 import Header from "./Header";
 
 export default function Course() {
-    
     const { courseId } = useParams();
     const [course, setCourse] = useState(null);
     const { userType } = useAuth();
@@ -40,29 +39,37 @@ export default function Course() {
     }
     return (
         <>
-            {/*<Assignments />*/}
-            <Routes>    
-                    <Route path="/assignments/* " element={<Assignments />} />
-                    {/*<Route path="/assignment/:assignmentId/*" element={<Assignment />} />*/}
+  
+            <Routes>
+                <Route path="/assignments/* " element={<Assignments />} />
+                {/*<Route path="/assignment/:assignmentId/*" element={<Assignment />} />*/}
             </Routes>
             <div>
-                <h1 >{course.id} - {course.description}</h1>
-            <h2>Teacher: {course.teacher_name}</h2>
-            {/*<NavLink to={'/home'}>Home</NavLink><br />
+                <h1>
+                    {course.id} - {course.description}
+                </h1>
+                <h2>Teacher: {course.teacher_name}</h2>
+                {/*<NavLink to={'/home'}>Home</NavLink><br />
             <NavLink to={`/`}>Courses</NavLink><br />*/}
-            <NavLink to={`/course/${courseId}/assignments`}>Assignments</NavLink>
+                <NavLink to={`/course/${courseId}/assignments`}>
+                    Assignments
+                </NavLink>
 
-            {userType === "teacher" ?
-        <>
-            <NavLink to={`/course/${courseId}/students`}>Students</NavLink>
-            <Routes>
-                <Route exact path="/students/*" element={<Students />} />
+                {userType === "teacher" ? (
+                    <>
+                        <NavLink to={`/course/${courseId}/students`}>
+                            Students
+                        </NavLink>
+                        <Routes>
+                            <Route
+                                exact
+                                path="/students/*"
+                                element={<Students />}
+                            />
                         </Routes>
-                        
-        </> : null
-            }
-
-        </div>
+                    </>
+                ) : null}
+            </div>
         </>
     );
 }
