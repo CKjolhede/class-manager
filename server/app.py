@@ -248,13 +248,13 @@ class CoursesbyStudentId(Resource):
 class Assignments(Resource):
     def get(self):
         assignments = Assignment.query.all()
-        return [assignment.to_dict(only=["id", "name", "points_possible", "description"]) for assignment in assignments]
+        return [assignment.to_dict(only=["id", "name", "points_possible", "description", "course_id"]) for assignment in assignments]
 
     def post(self):
         assignment = Assignment(**request.get_json())
         db.session.add(assignment)
         db.session.commit()
-        return assignment.to_dict(only=["id", "name", "points_possible", "description"]), 201
+        return assignment.to_dict(only=["id", "name", "points_possible", "description", "course_id"]), 201
 
 class AssignmentbyId(Resource):
     def get(self, assignment_id):
@@ -264,7 +264,8 @@ class AssignmentbyId(Resource):
                 "id": assignment.id,
                 "name": f"{assignment.name}",
                 "points_possible": f"{assignment.points_possible}", 
-                "description": f"{assignment.description}"}
+                "description": f"{assignment.description}",
+                "course_id": f"{assignment.course_id}"}
         else:
             raise NotFound
         
@@ -321,6 +322,17 @@ class AssignmentsbyTeacherId(Resource):
         
             ] 
     
+class StudentAssignments(Resource):
+    def get(self):
+        assignments = StudentAssignment.query.all()
+        return [assignment.to_dict(only=["points_earned", "assignment_id", "student_id"]) for assignment in assignments]
+    
+    def post(self):
+        assignment = StudentAssignment(**request.get_json())
+        db.session.add(assignment)
+        db.session.commit()
+        return assignment.to_dict(only=["points_earned", "assignment_id", "student_id"]), 201
+    
 class StudentAssignmentsbyTeacherId(Resource):
     def get(self, teacher_id):
         assignments = StudentAssignment.query.join(Student).join(StudentCourse).join(Course).join(Teacher).filter(Course.teacher_id == teacher_id).all()
@@ -373,6 +385,7 @@ api.add_resource(AssignmentsbyCourseId, '/course/<int:course_id>/assignments')
 api.add_resource(AssignmentsbyTeacherId, '/teacher/<int:teacher_id>/assignments')
 api.add_resource(StudentAssignmentsbyTeacherId, '/teacher/<int:teacher_id>/studentassignments')
 api.add_resource(StudentAssignmentsbyStudentId, '/student/<int:student_id>/studentassignments')
+api.add_resource(StudentAssignments, '/studentassignments')
 #api.add_resource(StudentAssignmentsbyCourseId, '/course/<int:course_id>/studentassignments/<int:student_id>')
 
 

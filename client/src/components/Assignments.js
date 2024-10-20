@@ -7,10 +7,7 @@ export default function AssignmentsTeacher() {
     const { courseId } = useParams();
     const [courseAssignments, setCourseAssignments] = useState([]);
     const [studentAssignments, setStudentAssignments] = useState([]);
-    //const [studentCourseAssignments, setStudentCourseAssignments] = useState([]);
-    //console.log("student course assignments fetched", studentCourseAssignments)
-    console.log("student assignments fetched", studentAssignments)
-    console.log("course assignments fetched", courseAssignments)
+
     
     useEffect(() => {
         const fetchStudentAssignments = async () => {
@@ -28,7 +25,7 @@ export default function AssignmentsTeacher() {
 
 
     useEffect(() => {
-        const fetchAssignments = async () => {
+        const fetchCourseAssignments = async () => {
             try {
                 const response = await fetch(`/course/${courseId}/assignments`);
                 if (response.ok) {
@@ -39,7 +36,7 @@ export default function AssignmentsTeacher() {
                 console.error("Error:", error);
             }
         };
-        fetchAssignments();
+        fetchCourseAssignments();
     }, [courseId]);
     
     //useEffect(() => {
@@ -89,6 +86,7 @@ export default function AssignmentsTeacher() {
 
     return (
         <>
+            {userType === "teacher" && <NavLink to={"/course/" + courseId + "/addassignment"}>New Assignment</NavLink>}
             <ul>
                 {courseAssignments?.map((assignment) => (
                     <li key={assignment.id}>

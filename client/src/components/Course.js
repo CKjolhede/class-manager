@@ -4,7 +4,7 @@ import { useParams, NavLink, Routes, Route } from "react-router-dom";
 import Students from "./Students";
 import Assignments from "./Assignments";
 import Assignment from "./Assignment";
-import Header from "./Header";
+import CreateAssignment from "./CreateAssignment";
 
 export default function Course() {
     const { courseId } = useParams();
@@ -37,23 +37,35 @@ export default function Course() {
     if (!course) {
         return <div>Loading...</div>;
     }
+    
+
     return (
         <>
-  
             <Routes>
                 <Route path="/assignments/* " element={<Assignments />} />
-                {/*<Route path="/assignment/:assignmentId/*" element={<Assignment />} />*/}
+                <Route
+                    path="/addassignment"
+                    element={<CreateAssignment />}
+                />
+                <Route path="/assignment/:assignmentId/*" element={<Assignment />} />
             </Routes>
             <div>
                 <h1>
                     {course.id} - {course.description}
                 </h1>
                 <h2>Teacher: {course.teacher_name}</h2>
-                {/*<NavLink to={'/home'}>Home</NavLink><br />
-            <NavLink to={`/`}>Courses</NavLink><br />*/}
-                <NavLink to={`/course/${courseId}/assignments`}>
-                    Assignments
-                </NavLink>
+                <div>
+                    {userType === "teacher" && (
+                        <NavLink to={`/course/${courseId}/addassignment`}>
+                            New Assignment
+                        </NavLink>
+                    )}
+                </div>
+                <div>
+                    <NavLink to={`/course/${courseId}/assignments`}>
+                        Assignments
+                    </NavLink>
+                </div>
 
                 {userType === "teacher" ? (
                     <>
