@@ -1,15 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from "../contexts/AuthContext";
-import { NavLink, Routes, Route, useParams } from 'react-router-dom';
-//import Header from './Header';
-//import Course from './Course';
-
+import { NavLink } from 'react-router-dom';
 
 export default function Courses() {
     const { userType, user } = useAuth();
-    const params = useParams();
-
     const [courses, setCourses] = useState([]);
+    
     useEffect(() => {
         const fetchCourses = async () => {
             try {
@@ -29,7 +25,6 @@ export default function Courses() {
         
     return (
         <>
-          
             <h1>Courses</h1>
             <div className="courses">
                 <ul>

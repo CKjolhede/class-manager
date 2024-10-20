@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { useAuth } from "../contexts/AuthContext";
-import { useParams, NavLink, useNavigate } from 'react-router-dom';
+import { useParams,  useNavigate } from 'react-router-dom';
 import { useFormik } from "formik";
 import * as yup from "yup";
 
@@ -113,7 +112,8 @@ export default function CreateAssignment({ assignStudentAssignment }) {
                 <div id="errors">
                     {errors.map((error,index) => (
                         <p key={index}>{error.message}</p>
-                    ))}
+                    )
+                    )}
                 </div>
                 
             </form> 
