@@ -30,7 +30,6 @@ export default function EditAssignment({ assignment, handleAssignmentUpdate }) {
                 });
                 if (response.ok) {
                     const updatedAssignment = await response.json();
-                    console.log(updatedAssignment)
                     handleAssignmentUpdate(updatedAssignment);
                     navigate(`/course/${courseId}/assignment/${updatedAssignment.id}`);
                     

@@ -333,6 +333,16 @@ class StudentAssignments(Resource):
         db.session.commit()
         return assignment.to_dict(only=["points_earned", "assignment_id", "student_id"]), 201
     
+class StudentAssignmentsbyAssignmentId(Resource):
+    def get(self, assignment_id):
+        studentassignments = StudentAssignment.query.join(Student).filter(StudentAssignment.assignment_id == assignment_id).all()
+        return [{
+            "points_earned": studentassignment.points_earned,
+            "student_id": studentassignment.student_id,
+            "assignment_id": studentassignment.assignment_id,
+            "student_name": f"{studentassignment.student.first_name} {studentassignment.student.last_name}"
+            } for studentassignment in studentassignments]
+    
 class StudentAssignmentsbyTeacherId(Resource):
     def get(self, teacher_id):
         assignments = StudentAssignment.query.join(Student).join(StudentCourse).join(Course).join(Teacher).filter(Course.teacher_id == teacher_id).all()
@@ -348,19 +358,6 @@ class StudentAssignmentsbyTeacherId(Resource):
             }
             for assignment in assignments
         ]
-    
-#class StudentAssignmentsbyCourseId(Resource):
-#    def get(self, course_id, student_id):
-#        student_assignments = StudentAssignment.query.join(Student).join(StudentCourse).filter(StudentAssignment.student_id == student_id and StudentCourse.student_id == student_id and StudentCourse.course_id == course_id).all()
-#        return [ {
-#            "student_id": assignment.student_id,
-#            "assignment_name": f"{assignment.assignment.name}",
-#            "points_earned": assignment.points_earned,
-#            "points_possible": int(f"{assignment.assignment.points_possible}"), 
-#            "student_name": f"{assignment.student.first_name} {assignment.student.last_name}"
-#        }
-#            for assignment in student_assignments
-#        ]
     
 class StudentAssignmentsbyStudentId(Resource):
     def get(self, student_id):
@@ -384,6 +381,7 @@ api.add_resource(AssignmentsbyStudentId, '/student/<int:student_id>/assignments'
 api.add_resource(AssignmentsbyCourseId, '/course/<int:course_id>/assignments')
 api.add_resource(AssignmentsbyTeacherId, '/teacher/<int:teacher_id>/assignments')
 api.add_resource(StudentAssignmentsbyTeacherId, '/teacher/<int:teacher_id>/studentassignments')
+api.add_resource(StudentAssignmentsbyAssignmentId, '/assignment/<int:assignment_id>/studentassignments')
 api.add_resource(StudentAssignmentsbyStudentId, '/student/<int:student_id>/studentassignments')
 api.add_resource(StudentAssignments, '/studentassignments')
 #api.add_resource(StudentAssignmentsbyCourseId, '/course/<int:course_id>/studentassignments/<int:student_id>')
