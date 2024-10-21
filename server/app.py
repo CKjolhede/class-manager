@@ -301,6 +301,10 @@ class AssignmentsbyStudentId(Resource):
             for assignment in assignments
         ]          
 #assignment.to_dict(only=["id", "name", "points_possible", "description"]) for assignment in assignments]
+class AssignmentbyCourseId(Resource):
+    def get(self, course_Id):
+        assignments = Assignment.query.filter(Assignment.course_id == course_Id).all()
+        return [assignment.to_dict(only=["id", "name", "points_possible", "description", "course_id"]) for assignment in assignments]
     
 class AssignmentsbyCourseId(Resource):
     def get(self, course_id):
@@ -315,8 +319,7 @@ class AssignmentsbyCourseId(Resource):
                 "points_possible": int(f"{assignment.points_possible}"), 
                 "description": f"{assignment.description}",
                 "course_id": f"{assignment.course_id}",
-                #"studentassignments" : f"{studentassignments}" #studentassignments
-                #} for assignment in assignments]
+
                 "studentassignments": [
                     {
                         "sa_id": studentassignment.id,
@@ -447,6 +450,7 @@ api.add_resource(Assignments, '/assignments')
 api.add_resource(AssignmentbyId, '/assignment/<int:assignment_id>')
 api.add_resource(AssignmentsbyStudentId, '/student/<int:student_id>/assignments')
 api.add_resource(AssignmentsbyCourseId, '/course/<int:course_id>/assignments')
+api.add_resource(AssignmentbyCourseId, "/course/<int:course_id>/assignment/<int:assignment_id>")
 api.add_resource(AssignmentsbyTeacherId, '/teacher/<int:teacher_id>/assignments')
 api.add_resource(StudentAssignmentsbyTeacherId, '/teacher/<int:teacher_id>/studentassignments')
 api.add_resource(StudentAssignmentsbyAssignmentId, '/assignment/<int:assignment_id>/studentassignments')

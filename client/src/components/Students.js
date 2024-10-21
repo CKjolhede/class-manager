@@ -76,7 +76,7 @@ export default function Students({ handleSetCourseAssignments, courseAssignments
                         {courseStudents.map((student) => (
                             <tr key={student.id}>
                                 <td>
-                                    <NavLink to={`/student/${student.id}`}>
+                                    <NavLink to={`/course/${courseId}/students/student/${student.id}`}>
                                         {student.first_name} {student.last_name}
                                     </NavLink>
                                 </td>

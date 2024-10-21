@@ -55,7 +55,6 @@ export default function Assignments() {
             (studentAssignment) =>
                 studentAssignment?.assignment_id === assignmentId
         );
-        console.log("points earned assignmentId:",assignmentId)
         return studentAssignment?.points_earned || 0;
     };
 

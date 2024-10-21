@@ -51,7 +51,7 @@ export default function Home() {
                 />
                 <Route path="/teacherstudents" element={<TeacherStudents />} />
                 <Route
-                    path="/student/:studentId"
+                    path="/course/:courseId/students/student/:studentId"
                     element={
                         <Student
                             courseAssignments={courseAssignments}
