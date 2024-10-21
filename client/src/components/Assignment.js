@@ -9,7 +9,8 @@ export default function Assignment() {
     const { assignmentId, courseId } = useParams();
     const [assignment, setAssignment] = useState([]);
     const [studentAssignments, setStudentAssignments] = useState([]);
-    
+    console.log("assignment fetchedassignment", assignment)
+    console.log("assignment fetchedstudentassignments", studentAssignments)
     const handleAssignmentUpdate = async (updatedAssignment) => {
         setAssignment(updatedAssignment);
     }
@@ -26,6 +27,7 @@ export default function Assignment() {
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ points_earned: newPointsEarned }),
                 });
+                console.log("saBySAid", JSON.stringify(response));
                 if (response.ok) {
                     const updatedStudentAssignment = await response.json();
                     const updatedStudentAssignments = studentAssignments.map(
@@ -53,16 +55,17 @@ export default function Assignment() {
                 const assignmentresponse = await fetch(`/assignment/${assignmentId}`);
                 if (assignmentresponse.ok) {
                     const assignment = await assignmentresponse.json();
+                console.log("assiginment fetchassignment response:", assignment);
                     setAssignment(assignment);
-                
-                    const studentAssignmentsResponse = await fetch(
-                        `/assignment/${assignmentId}/studentassignments`
-                    );
-                    if (studentAssignmentsResponse.ok) {
-                        const studentAssignmentsData =
-                            await studentAssignmentsResponse.json();
-                        setStudentAssignments(studentAssignmentsData);
-                    }
+                    
+                const studentAssignmentsResponse = await fetch(
+                    `/assignment/${assignmentId}/studentassignments`
+                );
+                if (studentAssignmentsResponse.ok) {
+                    const studentAssignmentsData =
+                        await studentAssignmentsResponse.json();
+                    setStudentAssignments(studentAssignmentsData);
+                }
                 
                 }
             } catch (error) {
@@ -93,20 +96,27 @@ export default function Assignment() {
                         <ul>
                             {studentAssignments.map((studentAssignment) => (
                                 <li key={studentAssignment.id}>
-                                    {studentAssignment.student_name} - Points
-                                    Earned:
-                                    <form 
+                                    <NavLink to={`/student/${studentAssignment.student_id}`}>
+                                        {studentAssignment.student_name}
+                                    </NavLink>
+                                    <form
                                         onSubmit={async (e) => {
                                             e.preventDefault();
-                                            const newPointsEarned = e.target.pointsEarned.value;
+                                            const newPointsEarned =
+                                                e.target.pointsEarned.value;
                                             await handlePointsEarnedChange(
                                                 studentAssignment.id,
                                                 newPointsEarned
-                                            );}}  >
+                                            );
+                                        }}
+                                    >Points Earned:
                                         <input
                                             type="number"
                                             name="pointsEarned"
-                                            defaultValue={studentAssignment.points_earned} />
+                                            defaultValue={
+                                                studentAssignment.points_earned
+                                            }
+                                        />
                                         <button type="submit">Submit</button>
                                     </form>
                                 </li>
@@ -115,13 +125,22 @@ export default function Assignment() {
                     </div>
                     <div>
                         <NavLink
-                            to={`/course/${courseId}/assignment/${assignment.id}/edit`} >
+                            to={`/course/${courseId}/assignment/${assignment.id}/edit`}
+                        >
                             Edit
                         </NavLink>
                         <Routes>
-                            <Route path="/edit" element={<EditAssignment
-                                assignment={assignment}
-                                handleAssignmentUpdate={ handleAssignmentUpdate }/>}/>
+                            <Route
+                                path="/edit"
+                                element={
+                                    <EditAssignment
+                                        assignment={assignment}
+                                        handleAssignmentUpdate={
+                                            handleAssignmentUpdate
+                                        }
+                                    />
+                                }
+                            />
                         </Routes>
                     </div>
                 </>

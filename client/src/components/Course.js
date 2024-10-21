@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { useParams, NavLink, Routes, Route } from "react-router-dom";
-import Students from "./Students";
+
 import Assignments from "./Assignments";
 import Assignment from "./Assignment";
 import CreateAssignment from "./CreateAssignment";

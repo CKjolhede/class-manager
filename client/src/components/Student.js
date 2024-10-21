@@ -2,9 +2,10 @@ import React from 'react';
 import { useAuth } from '../contexts/AuthContext';
 
 
-export default function Student() {
+export default function Student({courseAssignments, studentAssignments}) {
     const { userType } = useAuth();
-    console.log(userType)
+    console.log('student courseAssignments', courseAssignments)
+    console.log('student studentAssignments', studentAssignments)
     
     
     
@@ -12,6 +13,6 @@ export default function Student() {
     
     
     return (
-        <h1>Student</h1>
+        <h1 style={{float: "right"}}>Student</h1>
     );
 }
