@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, NavLink } from 'react-router-dom';
+import { useParams, NavLink, Routes, Route } from 'react-router-dom';
+import Student from './Student';
 
-export default function Students() {
+export default function Students({ handleSetCourseAssignments, courseAssignments, handleSetStudentAssignments, studentAssignments }) {
     const [courseStudents, setCourseStudents] = useState([]);
-    const [courseAssignments, setCourseAssignments] = useState([]);
-    const [studentAssignments, setStudentAssignments] = useState([]);
-    console.log("students assignments", studentAssignments)
-    console.log("students courseassignments", courseAssignments)
-    console.log("students coursestudents", courseStudents)
-    const { courseId } = useParams();
+    //const [courseAssignments, setCourseAssignments] = useState([]);
+    //const [studentAssignments, setStudentAssignments] = useState([]);
 
+    const { courseId } = useParams();
+    console.log("students courseAssignments", courseAssignments);
+    console.log("students studentAssignments", studentAssignments);
     useEffect(() => {
         const getStudentsByCourse = async () => {
             try {
@@ -28,8 +28,8 @@ export default function Students() {
                 const response = await fetch(`/course/${courseId}/assignments`);
                 if (response.ok) {
                     const assignments = await response.json();
-                    console.log("fetched assignments by course",assignments)
-                    setCourseAssignments(assignments);
+
+                    handleSetCourseAssignments(assignments);
                 }
             } catch (error) {
                 console.error("Error:", error);
@@ -41,8 +41,7 @@ export default function Students() {
                 const response = await fetch(`/course/${courseId}/studentassignments`);
                 if (response.ok) {
                     const studentassignments = await response.json();
-                    console.log("fetched studentassignments by course",studentassignments)
-                    setStudentAssignments(studentassignments);
+                    handleSetStudentAssignments(studentassignments);
                 }
             } catch (error) {
                 console.error("Error:", error);
@@ -53,21 +52,12 @@ export default function Students() {
         getAssignmentsByCourse();
     }, [courseId]); 
     
-    const totalPointsEarned = (studentAssignments, student) => {
-            studentAssignments?.filter((sa) => sa.student_id === student.id).reduce((total, sa) => total + sa.points_earned, 0)}
+    //const totalPointsEarned = (studentAssignments, student) => {
+    //        studentAssignments?.filter((sa) => sa.student_id === student.id).reduce((total, sa) => total + sa.points_earned, 0)}
         
     return (
         <div>
             <h1>Students</h1>
-            {/*<ul>
-                {courseStudents.map((student) => (
-                    <li key={student.id}>
-                        <NavLink to={`/student/${student.id}`}>
-                            {student.first_name} {student.last_name}
-                        </NavLink>
-                    </li>
-                ))}
-            </ul>*/}
 
             {courseStudents.length > 0 && courseAssignments.length > 0 && (
                 <table>
@@ -86,7 +76,9 @@ export default function Students() {
                         {courseStudents.map((student) => (
                             <tr key={student.id}>
                                 <td>
-                                    {student.first_name} {student.last_name}
+                                    <NavLink to={`/student/${student.id}`}>
+                                        {student.first_name} {student.last_name}
+                                    </NavLink>
                                 </td>
 
                                 {courseAssignments.map((courseAssignment) => {
@@ -126,29 +118,36 @@ export default function Students() {
                                     )}
                                 </td>
                                 <td>
-                                    {((studentAssignments
-                                        ?.filter((sa) => sa.student_id === student.id)
-                                        .reduce((total, sa) => total + sa.points_earned, 0)
-                                    /
-                                    courseAssignments.reduce((total, ca) =>total + ca.points_possible,0 )) * 100).toFixed(1)} %
+                                    {(
+                                        (studentAssignments
+                                            ?.filter(
+                                                (sa) =>
+                                                    sa.student_id === student.id
+                                            )
+                                            .reduce(
+                                                (total, sa) =>
+                                                    total + sa.points_earned,
+                                                0
+                                            ) /
+                                            courseAssignments.reduce(
+                                                (total, ca) =>
+                                                    total + ca.points_possible,
+                                                0
+                                            )) *
+                                        100
+                                    ).toFixed(1)}{" "}
+                                    %
                                 </td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
             )}
+
+            
+            
         </div>
     );
     
-    //return (
-    //            <ul>
-    //        {courseStudents.map((student) => (
-    //            <li key={student.id}>
-    //                <NavLink to={`/student/${student.id}`}>
-    //                    {student.first_name} {student.last_name}
-    //                </NavLink>
-    //            </li>
-    //                ))}
-    //            </ul>
-    //        )
+
 }
