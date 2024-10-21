@@ -32,7 +32,7 @@ class StudentAssignment(db.Model, SerializerMixin):
     serializer_rules = ('-assignments.student_assignments', '-students.student_assignments')
     
     def __repr__(self):
-        return f'<StudentAssignment {self.id} {self.points_earned} {self.assignment_id}>'
+        return f'<StudentAssignment: {self.id} | AssignmentId: {self.assignment_id} | StudentId: {self.student_id} | AssignmentId: {self.assignment_id} | Points Earned: {self.points_earned}>'
     
 
 ## STUDENT COURSES ###########################
@@ -148,6 +148,6 @@ class Assignment(db.Model, SerializerMixin):
     #student_assignments = db.relationship('StudentAssignment', back_populates='assignment')
 
     def __repr__(self):
-        return f'<Assignment: {self.name} | Points Possible: {self.points_possible} | Description:{self.description}>'
+        return f'<AssignmentId: {self.id} | Assignment: {self.name} | Points Possible: {self.points_possible} | Description:{self.description} | Course: {self.course_id}>'
     
     serializer_rules = ('-course.assignments', '-course.teachers', '-student_assigments.assignments', '-student_assigments.students')

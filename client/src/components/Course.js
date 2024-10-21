@@ -50,35 +50,21 @@ export default function Course() {
                 <Route path="/assignment/:assignmentId/*" element={<Assignment />} />
             </Routes>
             <div>
-                <h1>
-                    {course.id} - {course.description}
-                </h1>
+                <h1>{course.id} - {course.description}</h1>
                 <h2>Teacher: {course.teacher_name}</h2>
-                <div>
-                    {userType === "teacher" && (
-                        <NavLink to={`/course/${courseId}/addassignment`}>
-                            New Assignment
-                        </NavLink>
-                    )}
-                </div>
-                <div>
-                    <NavLink to={`/course/${courseId}/assignments`}>
-                        Assignments
-                    </NavLink>
-                </div>
+                <NavLink to={`/course/${courseId}/assignments`}>
+                    Assignments </NavLink>
+
 
                 {userType === "teacher" ? (
                     <>
-                        <NavLink to={`/course/${courseId}/students`}>
-                            Students
-                        </NavLink>
-                        <Routes>
-                            <Route
-                                exact
-                                path="/students/*"
-                                element={<Students />}
-                            />
-                        </Routes>
+                    <NavLink to={`/course/${courseId}/addassignment`}>
+                        New Assignment </NavLink><br />
+                    <NavLink to={`/course/${courseId}/students`}>
+                        Students </NavLink>
+                    {/*<Routes>
+                        <Route path="/students/*" element={<Students />}/>
+                    </Routes>*/}
                     </>
                 ) : null}
             </div>

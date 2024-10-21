@@ -9,8 +9,6 @@ export default function Assignment() {
     const { assignmentId, courseId } = useParams();
     const [assignment, setAssignment] = useState([]);
     const [studentAssignments, setStudentAssignments] = useState([]);
-    console.log("studentassignments from assignment", studentAssignments)
-    
     
     const handleAssignmentUpdate = async (updatedAssignment) => {
         setAssignment(updatedAssignment);
@@ -97,21 +95,18 @@ export default function Assignment() {
                                 <li key={studentAssignment.id}>
                                     {studentAssignment.student_name} - Points
                                     Earned:
-                                <form 
-                                    onSubmit={async (e) => {
-                                        e.preventDefault();
-                                        const newPointsEarned = e.target.pointsEarned.value;
-                                        await handlePointsEarnedChange(
-                                            studentAssignment.id,
-                                            newPointsEarned
-                                        );
-                                        }}    
-                                    >
+                                    <form 
+                                        onSubmit={async (e) => {
+                                            e.preventDefault();
+                                            const newPointsEarned = e.target.pointsEarned.value;
+                                            await handlePointsEarnedChange(
+                                                studentAssignment.id,
+                                                newPointsEarned
+                                            );}}  >
                                         <input
                                             type="number"
                                             name="pointsEarned"
-                                            defaultValue={studentAssignment.points_earned}
-                                        />
+                                            defaultValue={studentAssignment.points_earned} />
                                         <button type="submit">Submit</button>
                                     </form>
                                 </li>
@@ -120,22 +115,13 @@ export default function Assignment() {
                     </div>
                     <div>
                         <NavLink
-                            to={`/course/${courseId}/assignment/${assignment.id}/edit`}
-                        >
+                            to={`/course/${courseId}/assignment/${assignment.id}/edit`} >
                             Edit
                         </NavLink>
                         <Routes>
-                            <Route
-                                path="/edit"
-                                element={
-                                    <EditAssignment
-                                        assignment={assignment}
-                                        handleAssignmentUpdate={
-                                            handleAssignmentUpdate
-                                        }
-                                    />
-                                }
-                            />
+                            <Route path="/edit" element={<EditAssignment
+                                assignment={assignment}
+                                handleAssignmentUpdate={ handleAssignmentUpdate }/>}/>
                         </Routes>
                     </div>
                 </>

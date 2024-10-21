@@ -9,6 +9,7 @@ from config import app, db, api, bcrypt
 import os
 import requests
 import ipdb
+from itertools import chain
 
 @app.route('/')
 def index():
@@ -303,8 +304,32 @@ class AssignmentsbyStudentId(Resource):
     
 class AssignmentsbyCourseId(Resource):
     def get(self, course_id):
-        assignments = Assignment.query.join(StudentAssignment).filter(Assignment.course_id == course_id).all()
-        return [assignment.to_dict(only=["id", "name", "points_possible", "description", "course_id"]) for assignment in assignments]
+        assignments = Assignment.query.filter(Assignment.course_id == course_id).all()
+        studentassignments = list(chain(*[StudentAssignment.query.filter(StudentAssignment.assignment_id == assignment.id).all() for assignment in assignments]))
+        #studentassignments = [StudentAssignment.query.filter(StudentAssignment.assignment_id == assignment.id).all() for assignment in assignments]  
+
+        return [
+            {
+                "assignment_id": assignment.id,
+                "name": f"{assignment.name}",
+                "points_possible": int(f"{assignment.points_possible}"), 
+                "description": f"{assignment.description}",
+                "course_id": f"{assignment.course_id}",
+                #"studentassignments" : f"{studentassignments}" #studentassignments
+                #} for assignment in assignments]
+                "studentassignments": [
+                    {
+                        "sa_id": studentassignment.id,
+                        "assignment_id": studentassignment.assignment_id,
+                        "points_earned": studentassignment.points_earned,
+                        "student_id": studentassignment.student_id,
+                        "student_name": f"{studentassignment.student.first_name} {studentassignment.student.last_name}"
+                    }
+                    for studentassignment in studentassignments
+                ]
+            }
+            for assignment in assignments
+        ]
     
 class AssignmentsbyTeacherId(Resource):
     def get(self, teacher_id):
@@ -332,6 +357,17 @@ class StudentAssignments(Resource):
         db.session.add(assignment)
         db.session.commit()
         return assignment.to_dict(only=["points_earned", "assignment_id", "student_id"]), 201
+
+class StudentAssignmentsbyCourseId(Resource):
+    def get(self, course_id):
+        studentassignments = StudentAssignment.query.join(Assignment).filter(Assignment.course_id == course_id).all()
+        return [
+            {
+                "student_id": studentassignment.student_id,
+                "assignment_id": studentassignment.assignment_id,
+                "points_earned": studentassignment.points_earned,
+                "course_id": studentassignment.assignment.course_id
+                } for studentassignment in studentassignments]
     
 class StudentAssignmentbyId(Resource):
     def get(self, studentassignment_id):
@@ -417,6 +453,7 @@ api.add_resource(StudentAssignmentsbyAssignmentId, '/assignment/<int:assignment_
 api.add_resource(StudentAssignmentsbyStudentId, '/student/<int:student_id>/studentassignments')
 api.add_resource(StudentAssignments, '/studentassignments')
 api.add_resource(StudentAssignmentbyId, '/studentassignment/<int:studentassignment_id>')
+api.add_resource(StudentAssignmentsbyCourseId, '/course/<int:course_id>/studentassignments')
 #api.add_resource(StudentAssignmentsbyCourseId, '/course/<int:course_id>/studentassignments/<int:student_id>')
 
 
