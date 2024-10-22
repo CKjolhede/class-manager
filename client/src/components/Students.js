@@ -60,7 +60,8 @@ export default function Students({ handleSetCourseAssignments, courseAssignments
             <h1>Students</h1>
 
             {courseStudents.length > 0 && courseAssignments.length > 0 && (
-                <table>
+            <div class="table-responsive">    
+                <table class="table">
                     <thead>
                         <tr>
                             <th>Student</th>
@@ -72,7 +73,7 @@ export default function Students({ handleSetCourseAssignments, courseAssignments
                             <th>Grade</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="table-group-divider">
                         {courseStudents.map((student) => (
                             <tr key={student.id}>
                                 <td>
@@ -141,7 +142,8 @@ export default function Students({ handleSetCourseAssignments, courseAssignments
                             </tr>
                         ))}
                     </tbody>
-                </table>
+                    </table>
+            </div>
             )}
 
             

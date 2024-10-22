@@ -49,8 +49,8 @@ export default function Course() {
                 />
                 <Route path="/assignment/:assignmentId/*" element={<Assignment />} />
             </Routes>
-            <div>
-                <h1>{course.id} - {course.description}</h1>
+            <div class="container-fluid">
+                <h1 class="text-success">{course.description}</h1>
                 <h2>Teacher: {course.teacher_name}</h2>
                 <NavLink to={`/course/${courseId}/assignments`}>
                     Assignments </NavLink>
