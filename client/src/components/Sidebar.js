@@ -8,9 +8,6 @@ export default function Sidebar() {
     const { userType } = useAuth();
     return (
         <div className="sidebar">
-            <NavLink to="/home">Home</NavLink><br />
-            <NavLink to="/courses">Courses</NavLink><br />
-            {userType === "teacher" ? <NavLink to={'/teacherstudents'}>All Students</NavLink> : null}
             {courseId && userType === "teacher" ? <NavLink to={`/course/${courseId}/students`}>Students</NavLink> : null}<br />
             {courseId && <NavLink to={`/course/${courseId}`}>Course</NavLink>}<br />
             {courseId && <NavLink to={`/course/${courseId}/students`}>Students</NavLink>}<br />

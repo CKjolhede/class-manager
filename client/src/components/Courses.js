@@ -25,8 +25,10 @@ export default function Courses() {
         
     return (
         <>
+            <div class="container-fluid" text-bg-color="blue">
+                <div class="row">
+                    <div class="col-12">
             <h1>Courses</h1>
-            <div className="courses">
                 <ul>
                     {courses?.map((course) => (
                         <li key={course.id}>
@@ -39,7 +41,7 @@ export default function Courses() {
                         </li>
                     ))}
                 </ul>
-            </div>
+            </div></div></div>
         </>
     );
 }

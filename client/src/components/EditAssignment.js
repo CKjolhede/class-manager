@@ -46,10 +46,10 @@ export default function EditAssignment({ assignment, handleAssignmentUpdate }) {
     });
     return (
         <>
-        <div className="edit-assignment">
+        <div class="container">
             <h1>Edit Assignment</h1>
             <form onSubmit={formik.handleSubmit}>
-                <label htmlFor="name">Name  </label>
+                <label htmlFor="name" class="form-label">Name  </label>
                 <input
                     id="name"
                     name="name"
@@ -57,6 +57,7 @@ export default function EditAssignment({ assignment, handleAssignmentUpdate }) {
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                     value={formik.values.name}
+                    class="form-control"
                     />
                 {formik.touched.name && formik.errors.name ? (
                     <div>{formik.errors.name}</div>
