@@ -71,12 +71,19 @@ export default function Assignments() {
     };
     return (
         <>
-            {userType === "teacher" && (
+            <div class="container-fluid">{userType === "teacher" && (
                 <NavLink to={"/course/" + courseId + "/addassignment"}>
                     New Assignment
-                </NavLink>
-            )}
-            <ul>
+                </NavLink> )}
+            </div>
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <h1>Assignments</h1>
+                    </div>
+                </div>
+            
+            <ul class="list-group">
                 {courseAssignments?.map((assignment) => (
                     <li key={assignment.id}>
                         <NavLink
@@ -107,7 +114,7 @@ export default function Assignments() {
                             ).toFixed(1) +
                             "%"}
                 </li>
-            </ul>
+            </ul></div>
         </>
     );
 }

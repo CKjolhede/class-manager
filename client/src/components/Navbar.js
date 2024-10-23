@@ -1,47 +1,33 @@
 import React from "react";
-import { Routes, Route, Navigate, NavLink } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
-import Login from "./Login";
-import Home from "./Home";
+import { NavLink, useParams, useNavigate } from "react-router-dom";
+import { useAuth  } from "../contexts/AuthContext";
 
 export default function Navbar() {
     const { logout, isLoggedIn, userType } = useAuth();
+    const { courseId } = useParams();
+    const navigate = useNavigate();
     return (
-        <>{isLoggedIn === true && (
-            <nav class="navbar navbar">
-                <div class="container-fluid p-s-1 m-0 ">
-                    <div class="navbar nav">
-                        {/*<button
-                            type="button"
-                            class="btn btn-secondary text-bg-dark">
-                            <NavLink to="/home">Home</NavLink>
-                            </button>*/}
-                        <button
-                            type="button"
-                            class="btn btn-secondary text-bg-warning"><NavLink to="/courses">Courses</NavLink>
-                        </button>
-                        {userType === "teacher" && (
-                            < button
+        <>
+            {isLoggedIn === true && (
+                <div class="navbar bg-grad-b2w w-100%">
+                    <div class="container-fluid justify-content-start pe-5 me-5 ">
+                        <div class="btn-group ">
+                            <button type="button" class="btn btn-primary " onClick={() => navigate('/courses')}>Courses</button>
+                            {userType === "teacher" && (
+                                <button type="button" class="btn btn-primary" onClick={() => navigate("/teacherstudents")} >
+                                        All Students
+                                </button>
+                            )}
+                            <button
                                 type="button"
-                                class="btn btn-secondary text-bg-warning" >
-                                <NavLink to={'/teacherstudents'}>All Students</NavLink>
-                            </button>)}
-                        <button
-                            type="button"
-                            class="btn btn-secondary text-bg-warning">
-                            <NavLink to="/assignments">Assignments</NavLink>
-                        </button>
-                        <button
-                            type="button"
-                            class="btn btn-secondary text-bg-warning"
-                            onClick={logout}>
-                            Logout
-                        </button>
-        
+                                class="btn btn-primary text-bg-warning "
+                                onClick={logout}>
+                                Logout
+                                </button>
+                        </div>
                     </div>
                 </div>
-            </nav>
-        )}
+            )}
         </>
     );
 }

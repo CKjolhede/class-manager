@@ -43,30 +43,49 @@ export default function Course() {
         <>
             <Routes>
                 <Route path="/assignments/* " element={<Assignments />} />
+                <Route path="/addassignment" element={<CreateAssignment />} />
                 <Route
-                    path="/addassignment"
-                    element={<CreateAssignment />}
+                    path="/assignment/:assignmentId/*"
+                    element={<Assignment />}
                 />
-                <Route path="/assignment/:assignmentId/*" element={<Assignment />} />
             </Routes>
-            <div class="container-fluid">
-                <h1 class="text-success">{course.description}</h1>
-                <h2>Teacher: {course.teacher_name}</h2>
-                <NavLink to={`/course/${courseId}/assignments`}>
-                    Assignments </NavLink>
 
 
-                {userType === "teacher" ? (
-                    <>
-                    <NavLink to={`/course/${courseId}/addassignment`}>
-                        New Assignment </NavLink><br />
-                    <NavLink to={`/course/${courseId}/students`}>
-                        Students </NavLink>
-                    {/*<Routes>
-                        <Route path="/students/*" element={<Students />}/>
-                    </Routes>*/}
-                    </>
-                ) : null}
+                <div class="container-fluid w-100% p-0 m-0">
+                    <ul class="list-group list-group-flush list-group-horizontal justify-content-start p-0 m-0 nav text-decoration-none">
+                        <li class="list-group-item ">
+                
+                        <NavLink to={`/course/${courseId}/assignments`}>
+                            Assignments
+                            </NavLink>
+
+                        </li>
+                        <li class="list-group-item">
+           
+                            {userType === "teacher" ? (
+                        
+                                <NavLink
+                                    to={`/course/${courseId}/addassignment`}
+                                >
+                                    New Assignment{" "}
+                                </NavLink>) : null}
+                        </li>
+                        <li class="list-group-item">
+                                <NavLink to={`/course/${courseId}/students`}>
+                                    Students{" "}
+                                </NavLink>
+                                {/*<Routes>
+                            <Route path="/students/*" element={<Students />}/>
+                        </Routes>*/}
+                        </li>
+                </ul>
+                    </div>
+    
+            <div class="container-fluid ">
+                <h1 class="row text-blue p-2 m-s-1">{course.description}</h1>
+                {userType === "student" && (
+                    <h2>Teacher: {course.teacher_name}</h2>
+                )}
             </div>
         </>
     );

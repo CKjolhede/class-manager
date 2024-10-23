@@ -25,7 +25,7 @@ export default function Home() {
     
     return (
         <>
-            <Sidebar />
+            {/*<Sidebar />*/}
 
             <Routes>
                 <Route path="/courses/*" element={<Courses />} />
