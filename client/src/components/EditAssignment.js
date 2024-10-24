@@ -7,6 +7,7 @@ import { useParams, useNavigate } from "react-router-dom";
 export default function EditAssignment({ assignment, handleAssignmentUpdate }) {
     const [errors, setErrors] = useState([]);
     const { courseId } = useParams();
+    console.log("edit assignment", assignment);
     const navigate = useNavigate();
     
     const formik = useFormik({
@@ -31,7 +32,7 @@ export default function EditAssignment({ assignment, handleAssignmentUpdate }) {
                 if (response.ok) {
                     const updatedAssignment = await response.json();
                     handleAssignmentUpdate(updatedAssignment);
-                    navigate(`/course/${courseId}/assignment/${updatedAssignment.id}`);
+                    navigate(`assignment/${updatedAssignment.id}`);
                     
                 } else {
                     const errorResponse = await response.json();
@@ -46,10 +47,10 @@ export default function EditAssignment({ assignment, handleAssignmentUpdate }) {
     });
     return (
         <>
-        <div class="container">
+        <div>
             <h1>Edit Assignment</h1>
             <form onSubmit={formik.handleSubmit}>
-                <label htmlFor="name" class="form-label">Name  </label>
+                <label htmlFor="name" >Name  </label>
                 <input
                     id="name"
                     name="name"

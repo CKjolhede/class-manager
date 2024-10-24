@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, NavLink } from 'react-router-dom';
 
 
 
@@ -29,7 +29,6 @@ export default function Student({ courseAssignments, studentAssignments }) {
                 const response = await fetch(url);
                 if (response.ok) {
                     const data = await response.json()
-                    console.log("student fetchcourse", data)
                     setCourse({
                         description: data[0].description,
                         courseId: data[0].id,
@@ -48,46 +47,90 @@ export default function Student({ courseAssignments, studentAssignments }) {
     
     
     return (
-            <>
-                <h1> {student.first_name} {student.last_name}</h1>
-                <h2> {course.description}</h2>
-                <table>
-                    <thead>
-                        <tr>
-                            {courseAssignments.map((assignment) => (
-                                <th key={assignment.id}>{assignment.name}</th>
-                            ))}
-                            <th>Total Points</th>
-                            <th>Assignment Points</th>
-                            <th>Grade</th>                              
-                        </tr>
-                    </thead>
-                    <tbody>
+        <>
+            <h3>Student:</h3>
+            <NavLink to={`/studentpage/${studentId}`}>
+                <h1>
+                    {student.first_name} {student.last_name}
+                </h1>
+            </NavLink>
+            <h2> {course.description}</h2>
+            <table>
+                <thead>
+                    <tr>
+                        {courseAssignments.map((assignment) => (
+                            <th key={assignment.id}>
+                                {" "}
+                                <NavLink
+                                    to={`/assignment/${assignment.assignment_id}`}
+                                    params={courseId}
+                                >
+                                    {assignment.name}
+                                </NavLink>
+                            </th>
+                        ))}
+                        <th>Total Points</th>
+                        <th>Assignment Points</th>
+                        <th>Grade</th>
+                    </tr>
+                </thead>
+                <tbody>
                     <tr>
                         {courseAssignments?.map((courseAssignment) => {
-                            const thisAssignment = studentAssignments?.find((sa) => sa.assignment_id === courseAssignment.assignment_id);
-                        console.log("student thisAssignment", thisAssignment)
+                            const thisAssignment = studentAssignments?.find(
+                                (sa) =>
+                                    sa.assignment_id ===
+                                    courseAssignment.assignment_id
+                            );
+                            console.log(
+                                "student thisAssignment",
+                                thisAssignment
+                            );
                             return (
                                 <td key={courseAssignment.assignment_id}>
                                     {thisAssignment
-                                        ? thisAssignment.points_earned : 0} / {courseAssignment.points_possible} 
-                                </td>);
+                                        ? thisAssignment.points_earned
+                                        : 0}{" "}
+                                    / {courseAssignment.points_possible}
+                                </td>
+                            );
                         })}
                         <td>
-                            {studentAssignments?.filter((sa) => sa.student_id === student.id)
-                            .reduce((total, sa) => total + sa.points_earned, 0)} 
+                            {studentAssignments
+                                ?.filter((sa) => sa.student_id === student.id)
+                                .reduce(
+                                    (total, sa) => total + sa.points_earned,
+                                    0
+                                )}
                         </td>
                         <td>
-                            {courseAssignments?.reduce((total, ca) => total + ca.points_possible, 0)}
+                            {courseAssignments?.reduce(
+                                (total, ca) => total + ca.points_possible,
+                                0
+                            )}
                         </td>
                         <td>
                             {(
                                 (studentAssignments
-                                    ?.filter((sa) => sa.student_id === student.id).reduce((total, sa) => total + sa.points_earned, 0) / courseAssignments.reduce((total, ca) => total + ca.points_possible, 0)) * 100).toFixed(1)}%</td>
-
-                        </tr>
-                    </tbody>
-                </table>
-            </>
-            )
+                                    ?.filter(
+                                        (sa) => sa.student_id === student.id
+                                    )
+                                    .reduce(
+                                        (total, sa) => total + sa.points_earned,
+                                        0
+                                    ) /
+                                    courseAssignments.reduce(
+                                        (total, ca) =>
+                                            total + ca.points_possible,
+                                        0
+                                    )) *
+                                100
+                            ).toFixed(1)}
+                            %
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </>
+    );
 }

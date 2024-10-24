@@ -1,0 +1,20 @@
+.bg-grad-db2b {
+    background: linear-gradient(to bottom, rgb(8 , 8, 80), rgb(8, 8, 150));
+}
+
+.bg-grad-b2w {
+    background: linear-gradient(to bottom, rgb(8 , 8, 150), rgb(255, 255, 255));
+}
+
+.bg-darkblue {
+    background-color: rgb(8 ,8 ,80);
+}
+
+.bg-blue {
+    background-color: rgb(8, 8, 150);
+}
+
+.navbar-button {
+    font-weight: normal;
+    text-decoration: none;
+}

@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, NavLink, Routes, Route } from 'react-router-dom';
-import Student from './Student';
+import { useParams, NavLink } from 'react-router-dom';
+import { useAuth } from "../contexts/AuthContext";
+
 
 export default function Students({ handleSetCourseAssignments, courseAssignments, handleSetStudentAssignments, studentAssignments }) {
     const [courseStudents, setCourseStudents] = useState([]);
+    const { userType } = useAuth();
     //const [courseAssignments, setCourseAssignments] = useState([]);
     //const [studentAssignments, setStudentAssignments] = useState([]);
 
@@ -50,105 +52,135 @@ export default function Students({ handleSetCourseAssignments, courseAssignments
         getStudentAssignmentsByCourse();
         getStudentsByCourse();
         getAssignmentsByCourse();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [courseId]); 
     
     //const totalPointsEarned = (studentAssignments, student) => {
     //        studentAssignments?.filter((sa) => sa.student_id === student.id).reduce((total, sa) => total + sa.points_earned, 0)}
         
     return (
-        <div>
-            <h1>Students</h1>
+        <>
+            <div>
+                {userType === "teacher" ? (
+                    <NavLink to={`/course/${courseId}/addassignment`}>
+                        New Assignment
+                    </NavLink>
+                ) : null}
+                <h1>Students</h1>
 
-            {courseStudents.length > 0 && courseAssignments.length > 0 && (
-            <div class="table-responsive">    
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Student</th>
-                            {courseAssignments.map((assignment) => (
-                                <th key={assignment.id}>{assignment.name}</th>
-                            ))}
-                            <th>Total Points Earned</th>
-                            <th>Total Points Possible</th>
-                            <th>Grade</th>
-                        </tr>
-                    </thead>
-                    <tbody class="table-group-divider">
-                        {courseStudents.map((student) => (
-                            <tr key={student.id}>
-                                <td>
-                                    <NavLink to={`/course/${courseId}/students/student/${student.id}`}>
-                                        {student.first_name} {student.last_name}
-                                    </NavLink>
-                                </td>
-
-                                {courseAssignments.map((courseAssignment) => {
-                                    const thisAssignment =
-                                        studentAssignments?.find(
-                                            (sa) =>
-                                                sa.assignment_id ===
-                                                    courseAssignment.assignment_id &&
-                                                sa.student_id === student.id
-                                        );
-                                    return (
-                                        <td key={courseAssignment.id}>
-                                            {thisAssignment
-                                                ? thisAssignment.points_earned
-                                                : 0}{" "}
-                                            / {courseAssignment.points_possible}
+                {courseStudents.length > 0 && courseAssignments.length > 0 && (
+                    <div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Student</th>
+                                    {courseAssignments.map((assignment) => (
+                                        <th key={assignment.id}>
+                                            <NavLink
+                                                to={`/assignment/${assignment.assignment_id}`}
+                                            >
+                                                {assignment.name}
+                                            </NavLink>
+                                        </th>
+                                    ))}
+                                    <th>Total Points Earned</th>
+                                    <th>Total Points Possible</th>
+                                    <th>Grade</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {courseStudents.map((student) => (
+                                    <tr key={student.id}>
+                                        <td>
+                                            <NavLink
+                                                to={`/course/${courseId}/students/student/${student.id}`}
+                                            >
+                                                {student.first_name}{" "}
+                                                {student.last_name}
+                                            </NavLink>
                                         </td>
-                                    );
-                                })}
-                                <td>
-                                    {studentAssignments
-                                        ?.filter(
-                                            (sa) => sa.student_id === student.id
-                                        )
-                                        .reduce(
-                                            (total, sa) =>
-                                                total + sa.points_earned,
-                                            0
-                                        )}
-                                </td>
 
-                                <td>
-                                    {courseAssignments.reduce(
-                                        (total, ca) =>
-                                            total + ca.points_possible,
-                                        0
-                                    )}
-                                </td>
-                                <td>
-                                    {(
-                                        (studentAssignments
-                                            ?.filter(
-                                                (sa) =>
-                                                    sa.student_id === student.id
-                                            )
-                                            .reduce(
-                                                (total, sa) =>
-                                                    total + sa.points_earned,
-                                                0
-                                            ) /
-                                            courseAssignments.reduce(
+                                        {courseAssignments.map(
+                                            (courseAssignment) => {
+                                                const thisAssignment =
+                                                    studentAssignments?.find(
+                                                        (sa) =>
+                                                            sa.assignment_id ===
+                                                                courseAssignment.assignment_id &&
+                                                            sa.student_id ===
+                                                                student.id
+                                                    );
+                                                return (
+                                                    <td
+                                                        key={
+                                                            courseAssignment.id
+                                                        }
+                                                    >
+                                                        {thisAssignment
+                                                            ? thisAssignment.points_earned
+                                                            : 0}{" "}
+                                                        /{" "}
+                                                        {
+                                                            courseAssignment.points_possible
+                                                        }
+                                                    </td>
+                                                );
+                                            }
+                                        )}
+                                        <td>
+                                            {studentAssignments
+                                                ?.filter(
+                                                    (sa) =>
+                                                        sa.student_id ===
+                                                        student.id
+                                                )
+                                                .reduce(
+                                                    (total, sa) =>
+                                                        total +
+                                                        sa.points_earned,
+                                                    0
+                                                )}
+                                        </td>
+
+                                        <td>
+                                            {courseAssignments.reduce(
                                                 (total, ca) =>
                                                     total + ca.points_possible,
                                                 0
-                                            )) *
-                                        100
-                                    ).toFixed(1)}{" "}
-                                    %
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                    </table>
+                                            )}
+                                        </td>
+                                        <td>
+                                            {(
+                                                (studentAssignments
+                                                    ?.filter(
+                                                        (sa) =>
+                                                            sa.student_id ===
+                                                            student.id
+                                                    )
+                                                    .reduce(
+                                                        (total, sa) =>
+                                                            total +
+                                                            sa.points_earned,
+                                                        0
+                                                    ) /
+                                                    courseAssignments.reduce(
+                                                        (total, ca) =>
+                                                            total +
+                                                            ca.points_possible,
+                                                        0
+                                                    )) *
+                                                100
+                                            ).toFixed(1)}{" "}
+                                            %
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
             </div>
-            )}
-
-            
-            
-        </div>
+        </>
     );
     
 

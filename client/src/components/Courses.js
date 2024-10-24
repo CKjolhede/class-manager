@@ -25,23 +25,21 @@ export default function Courses() {
         
     return (
         <>
-            <div class="container-fluid" text-bg-color="blue">
-                <div class="row">
-                    <div class="col-12">
-            <h1>Courses</h1>
-                <ul>
-                    {courses?.map((course) => (
-                        <li key={course.id}>
-                            <NavLink
-                                to={"../course/" + course.id}
-                                params={{ courseId: course.id }}
-                            >
-                                {course.description}
-                            </NavLink>
-                        </li>
-                    ))}
-                </ul>
-            </div></div></div>
+            <div class="container-fluid p-0 m-0 ">
+                <div class="row  ps-1 m-0 w-100%">
+                    <ul class="list-group ps-5 col-3 p-0 m-0">
+                        {courses?.map((course) => (
+                            <li key={course.id}>
+                                <NavLink
+                                    to={"../course/" + course.id}
+                                    params={{ courseId: course.id }} >
+                                    {course.description}
+                                </NavLink>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </div>
         </>
     );
 }

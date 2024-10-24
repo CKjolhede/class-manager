@@ -19,19 +19,20 @@ function App() {
                     <Header />
                     </div>
             </div>
-            {/*<div class="container-fluid p-0 m-0">*/}
-                {/*<div class="row text-bg-primary">*/}
+            {/*<div class="container-fluid p-0 m-0">
+                <div class="row bg-darkblue">
                     <Navbar />
-                {/*</div>*/}
-            {/*</div>*/}
-                        <Routes>
-                            <Route path="/course/:courseId/*" element={<Course />} />
-                            <Route exact path="/courses/*" element={<Courses />} />
+                </div>
+            </div>
+            */}
+            <Routes>
+                            {/*<Route path="/course/:courseId/*" element={<Course />} />
+                            <Route exact path="/courses/*" element={<Courses />} />*/}
                             <Route path="/*" element={user ? <Home /> : <Navigate to="/login"/>} />
                             <Route path="/login" element={<Login />} />
-                        </Routes>
+                </Routes>
             
-            </div>
+        </div>
     );
 }
 export default App;

@@ -73,7 +73,7 @@ class Student(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(100), nullable=False)
     last_name = db.Column(db.String(100), nullable=False)
-    _password_hash = db.Column(db.String, nullable=False)
+    _password_hash = db.Column(db.String, nullable=False, default='password')
     email = db.Column(db.String(100), nullable=False)
     
     #assignments = db.relationship('Assignment', secondary='student_assignments', back_populates='students') 

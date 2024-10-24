@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from "../contexts/AuthContext";
-import { useParams, NavLink } from "react-router-dom";
+import { useParams, NavLink, useNavigate} from "react-router-dom";
 
 export default function Assignments() {
+    const navigate = useNavigate();
     const { user, userType } = useAuth();
     const { courseId } = useParams();
     const [studentAssignments, setStudentAssignments] = useState([]);
@@ -71,34 +72,48 @@ export default function Assignments() {
     };
     return (
         <>
+            <NavLink to={`/course/${courseId}/assignments`}>
+                Assignments
+            </NavLink>
+
+            {userType === "teacher" ? (
+                <NavLink to={`/course/${courseId}/students`}>Students </NavLink>
+            //navigate("/course/" + courseId + "/students")
+            ) : null}
+            
             {userType === "teacher" && (
                 <NavLink to={"/course/" + courseId + "/addassignment"}>
                     New Assignment
                 </NavLink>
             )}
+            <h1>Assignments</h1>
+
             <ul>
                 {courseAssignments?.map((assignment) => (
                     <li key={assignment.id}>
                         <NavLink
-                            to={`/course/${courseId}/assignment/${assignment.assignment_id}`}
+                            to={`/assignment/${assignment.assignment_id}`}
+                            params={courseId}
                         >
                             {assignment.name}
                         </NavLink>
                         <ul>
+                            <li>{assignment.description}</li>
                             <li>
                                 {assignment.points_possible} points possible{" "}
                             </li>
                             {userType === "student" &&
-                                pointsEarned(assignment.assignment_id) + "points earned"}
+                                pointsEarned(assignment.assignment_id) +
+                                    "points earned"}
                         </ul>
                     </li>
                 ))}
-                <li>
+                
                     {userType === "student" &&
                         "Total earned points:" + totalEarnedPoints()}
-                </li>
+                
                 <li>Total possible points: {totalPossiblePoints()}</li>
-                <li>
+                
                     {userType === "student" &&
                         "Grade:" +
                             (
@@ -106,7 +121,7 @@ export default function Assignments() {
                                 100
                             ).toFixed(1) +
                             "%"}
-                </li>
+                
             </ul>
         </>
     );
