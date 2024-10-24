@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
+import StudentPage from "./StudentPage";
 
 
 export default function TeacherStudents() {
@@ -28,7 +29,7 @@ export default function TeacherStudents() {
             <ul>
                 {allStudents.map((student) => (
                     <li key={student.id}>
-                        <NavLink to={`/student/${student.id}`}>
+                        <NavLink to={`/studentpage/${student.id}`}>
                             {student.first_name} {student.last_name}
                         </NavLink>
                     </li>

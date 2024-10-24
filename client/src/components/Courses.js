@@ -32,8 +32,7 @@ export default function Courses() {
                             <li key={course.id}>
                                 <NavLink
                                     to={"../course/" + course.id}
-                                    params={{ courseId: course.id }}
-                                >
+                                    params={{ courseId: course.id }} >
                                     {course.description}
                                 </NavLink>
                             </li>

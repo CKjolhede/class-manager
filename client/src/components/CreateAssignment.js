@@ -52,7 +52,7 @@ export default function CreateAssignment({ assignStudentAssignment }) {
                             //}
                         }
                         )
-                    navigate(`/course/${courseId}/assignment/${newAssignmentId}`);
+                    navigate(`/assignment/${newAssignmentId}`);
                     } }      
                 }
                 catch (error) {

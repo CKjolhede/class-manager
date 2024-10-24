@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import {  useNavigate } from 'react-router-dom';
 import { useAuth } from "../contexts/AuthContext";
 
 export default function Header() {
@@ -23,7 +23,7 @@ export default function Header() {
 
                     {isLoggedIn === true && (
                         <> <div class="col-4"></div>
-                                <div class="btn-group col-2 pe-0 me-0">
+                                <div class="btn-group col-3 pe-0 me-0">
                                     <button
                                         type="button"
                                         class="btn  btn-primary btn-bg-darkblue"
@@ -31,7 +31,8 @@ export default function Header() {
                                     >
                                         Courses
                                     </button>
-                                    {userType === "teacher" && (
+                                {userType === "teacher" && (
+                                    <>
                                         <button
                                             type="button"
                                             class="btn btn-primary"
@@ -39,9 +40,13 @@ export default function Header() {
                                                 navigate("/teacherstudents")
                                             }
                                         >
-                                            All Students
+                                            Students
                                         </button>
-                                    )}
+                                        <button
+                                            type="button"
+                                            class="btn btn-primary"
+                                            onClick={() => navigate("/createstudent")}  > New Student</button>                                  
+                                </>)}
                                     <button
                                         type="button"
                                         class="btn btn-primary btn-warning "

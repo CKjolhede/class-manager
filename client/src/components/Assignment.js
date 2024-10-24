@@ -5,7 +5,7 @@ import EditAssignment from './EditAssignment';
 import { Routes, Route } from "react-router-dom";
 
 export default function Assignment() {
-    const { userType } = useAuth();
+    const {  user,userType } = useAuth();
     const { assignmentId, courseId } = useParams();
     const [assignment, setAssignment] = useState([]);
     const [studentAssignments, setStudentAssignments] = useState([]);
@@ -14,6 +14,14 @@ export default function Assignment() {
     const handleAssignmentUpdate = async (updatedAssignment) => {
         setAssignment(updatedAssignment);
     }
+    
+    const pointsEarned = () => {
+        const studentAssignment = studentAssignments?.find(
+            (studentAssignment) =>
+                studentAssignment?.student_id === user.id
+        );
+        return studentAssignment?.points_earned || 0;
+    };
     
     const handlePointsEarnedChange = async (
         studentAssignmentId,
@@ -27,7 +35,6 @@ export default function Assignment() {
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ points_earned: newPointsEarned }),
                 });
-                console.log("saBySAid", JSON.stringify(response));
                 if (response.ok) {
                     const updatedStudentAssignment = await response.json();
                     const updatedStudentAssignments = studentAssignments.map(
@@ -81,14 +88,19 @@ export default function Assignment() {
     
     return (
         <>
-            <h1>Assignment</h1>
+            {userType === "teacher" ? (
+                
+            
+            <NavLink to={`/course/${assignment.course_id}/students`}>Students</NavLink>) : null}
+            
+            <h3>Assignment</h3>
             {assignment && (
-                <h1>
-                    Assignnment: {assignment.name}
-                    <br /> Description: {assignment.description}
-                    <br /> Points Possible: {assignment.points_possible}
-                </h1>
-            )}
+                <>
+                    <h1> {assignment.name} </h1>
+                    <h3> {assignment.description}</h3>
+                    <h4>{userType === "student" && `Points Earned:  ${pointsEarned()}`}</h4>
+                    <h4> Points Possible: {assignment.points_possible}</h4>
+            </> )}
             {userType === "teacher" ? (
                 <>
                     <div>
@@ -96,7 +108,7 @@ export default function Assignment() {
                         <ul>
                             {studentAssignments.map((studentAssignment) => (
                                 <li key={studentAssignment.id}>
-                                    <NavLink to={`/student/${studentAssignment.student_id}`}>
+                                    <NavLink to={`/course/${courseId}/students/student/${studentAssignment.student_id}`}>
                                         {studentAssignment.student_name}
                                     </NavLink>
                                     <form
@@ -125,7 +137,7 @@ export default function Assignment() {
                     </div>
                     <div>
                         <NavLink
-                            to={`/course/${courseId}/assignment/${assignment.id}/edit`}
+                            to={`/assignment/${assignmentId}/edit`}
                         >
                             Edit
                         </NavLink>

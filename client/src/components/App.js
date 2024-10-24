@@ -25,9 +25,9 @@ function App() {
                 </div>
             </div>
             */}
-                        <Routes>
-                            <Route path="/course/:courseId/*" element={<Course />} />
-                            <Route exact path="/courses/*" element={<Courses />} />
+            <Routes>
+                            {/*<Route path="/course/:courseId/*" element={<Course />} />
+                            <Route exact path="/courses/*" element={<Courses />} />*/}
                             <Route path="/*" element={user ? <Home /> : <Navigate to="/login"/>} />
                             <Route path="/login" element={<Login />} />
                 </Routes>
