@@ -12,5 +12,9 @@ export const CourseProvider = ({ children, courseId }) => {
 
 export const useCourse = () => {
     const courseId = useContext(CourseContext);
-    return courseId;
+    
+    
+    
+    
+    return useContext(CourseContext)
 };

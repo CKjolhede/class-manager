@@ -6,11 +6,30 @@ export default function Assignments() {
     const navigate = useNavigate();
     const { user, userType } = useAuth();
     const { courseId } = useParams();
+    const [course, setCourse] = useState(null);
     const [studentAssignments, setStudentAssignments] = useState([]);
     const [courseAssignments, setCourseAssignments] = useState([]);
-    console.log("assignments courseassignments:", courseAssignments);
-    console.log("assignments studentassignments:", studentAssignments);
+    console.log("courseassignments", courseAssignments)
+    console.log("studentassignments", studentAssignments)
+
     useEffect(() => {
+        const fetchCourse = async () => {
+            try {
+                const response = await fetch(`/course/${courseId}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    setCourse(data)
+                }
+            } catch (error) {
+                console.error("Error:", error);
+            }
+        }
+        
+        fetchCourse();
+    }, [courseId]);
+    
+    useEffect(() => {
+
         const fetchStudentAssignments = async () => {
             try {
                 const response = await fetch(
@@ -39,6 +58,7 @@ export default function Assignments() {
             }
         };
         
+
         fetchStudentAssignments(user);
         fetchCourseAssignments(courseId);
     }, [user, courseId]);
@@ -63,66 +83,95 @@ export default function Assignments() {
         const earnedPoints = courseAssignments?.map((courseAssignment) => {
             const studentAssignment = studentAssignments?.find(
                 (studentAssignment) =>
-                    studentAssignment?.assignment_Id === courseAssignment.id
+                    studentAssignment?.assignment_id === courseAssignment.assignment_id
             );
             return studentAssignment?.points_earned || 0;
         });
         const sum = earnedPoints?.reduce((acc, curr) => acc + curr, 0);
         return sum || 0;
     };
+    
     return (
         <>
-            <NavLink to={`/course/${courseId}/assignments`}>
-                Assignments
-            </NavLink>
-
-            {userType === "teacher" ? (
-                <NavLink to={`/course/${courseId}/students`}>Students </NavLink>
-            //navigate("/course/" + courseId + "/students")
-            ) : null}
-            
-            {userType === "teacher" && (
-                <NavLink to={"/course/" + courseId + "/addassignment"}>
-                    New Assignment
-                </NavLink>
-            )}
-            <h1>Assignments</h1>
-
-            <ul>
-                {courseAssignments?.map((assignment) => (
-                    <li key={assignment.id}>
-                        <NavLink
-                            to={`/assignment/${assignment.assignment_id}`}
-                            params={courseId}
+            <div class="container-fluid bg-dark ps-5 m-0">
+                <div class="btn-group col-4 d-grid-gap-2 d-md-flex">
+                    <button
+                        class="btn btn-dark"
+                        type="button"
+                        onClick={() => navigate(`/course/${courseId}/`)}
+                    >
+                        Course
+                    </button>
+                    {userType === "teacher" && (
+                        <button
+                            class="btn btn-dark"
+                            type="button"
+                            onClick={() =>
+                                navigate(`/course/${courseId}/students`)
+                            }
                         >
-                            {assignment.name}
-                        </NavLink>
-                        <ul>
-                            <li>{assignment.description}</li>
-                            <li>
-                                {assignment.points_possible} points possible{" "}
-                            </li>
-                            {userType === "student" &&
-                                pointsEarned(assignment.assignment_id) +
-                                    "points earned"}
-                        </ul>
-                    </li>
-                ))}
+                            Students
+                        </button>
+                    )}
+                    {userType === "teacher" && (
+                        <button
+                            class="btn btn-dark"
+                            type="button"
+                            onClick={() =>
+                                navigate(`/course/${courseId}/addassignment`)
+                            }
+                        >
+                            New Assignment
+                        </button>
+                    )}
+                </div>
                 
-                    {userType === "student" &&
-                        "Total earned points:" + totalEarnedPoints()}
+            </div>
+            <div class="container-fluid bg-gray-600 ps-5 m-0">
+                <h3>{course?.description}</h3></div>
+            <div class="container-fluid bg-gray-500 ps-5 m-0"><h2>Assignments</h2></div>
+            <div class="table-responsive ps-4">
+                <table class="table table-hover table-primary" >
+                    <thead>
+                        <tr>
+                            <th>Assignment</th>
+                            <th>Description</th>
+                            <th>Points Possible</th>
+                            {userType === "student" && <th>Points Earned</th>}
+                        </tr>
+                    </thead>
+                    <tbody>
+                            {courseAssignments?.map((assignment) => (
+                        <tr>
+                            <>
+                            <td class="text-left" key={assignment.id}>
+                                    <NavLink to={`/assignment/${assignment.assignment_id}`} params={courseId} >
+                                        {assignment.name}</NavLink></td>
+                            <td>{assignment.description}</td>
+                                        <td>{assignment.points_possible} </td>
+                            <td>{userType === "student" && pointsEarned(assignment.assignment_id)}</td>
+                            </>
+                                </tr>))}
+                        <tr>
+                            <td></td>
+                            <td class="text-end fw-bold">Total Points Possible:</td>
+                            <td>{totalPossiblePoints()}</td>
+                            {userType === "student" && <td class="text-s fw-bold">Total Points Earned :
+                                {totalEarnedPoints()}</td>}
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="container-fluid bg-gray-500 ps-5 col-4"><h2>{userType === "student" &&
+                    "Grade:" +
+                        (
+                            (totalEarnedPoints() / totalPossiblePoints()) *
+                            100
+                        ).toFixed(1) +
+                        "%"}</h2></div>
                 
-                <li>Total possible points: {totalPossiblePoints()}</li>
-                
-                    {userType === "student" &&
-                        "Grade:" +
-                            (
-                                (totalEarnedPoints() / totalPossiblePoints()) *
-                                100
-                            ).toFixed(1) +
-                            "%"}
-                
-            </ul>
+
         </>
+
     );
 }

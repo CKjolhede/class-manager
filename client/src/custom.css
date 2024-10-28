@@ -14,6 +14,26 @@
     background-color: rgb(8, 8, 150);
 }
 
+.bg-gray-500 {
+    background-color: #adb5bd
+}
+
+.bg-gray-600 {
+    background-color: #6c757d
+}
+
+.bg-gray-700 {
+    background-color: #495057
+}
+
+.bg-gray-800 {
+    background-color: #343a40
+}
+
+.bg-gray-900 {
+    background-color: #212529
+}
+
 .navbar-button {
     font-weight: normal;
     text-decoration: none;

@@ -144,7 +144,7 @@ class Students(Resource):
         student = Student(**request.get_json())
         db.session.add(student)
         db.session.commit()
-        return student.to_dict(only=["id", "first_name", "last_name", "email"]), 201   
+        return student.to_dict(only=["id", "first_name", "last_name", "email", "password_hash"]), 201   
     
 class StudentbyId(Resource):
     def get(self, student_id):
@@ -212,8 +212,12 @@ class CoursebyId(Resource):
         if course := Course.query.filter(Course.id == course_id).first():
             teacher = Teacher.query.filter(Teacher.id == course.teacher_id).first()
             teacher_name = f"{teacher.name}"
-            return ((course.to_dict(only=["id", "description", "teacher_id"]), 
-                teacher_name
+            return (({
+                "id": course.id,
+                "description": f"{course.description}",
+                "teacher_id": course.teacher_id,
+                "teacher_name": teacher_name
+            }
                     ), 200) 
         else:
             raise NotFound
@@ -443,7 +447,7 @@ api.add_resource(StudentsbyCourseId, '/course/<int:course_id>/students')
 api.add_resource(StudentsbyAssignmentId, '/assignment/<int:assignment_id>/students')
 api.add_resource(StudentsbyTeacherId, '/teacher/<int:teacher_id>/students')
 api.add_resource(Courses, '/courses')
-api.add_resource(CoursebyId, '/courses/<int:course_id>')
+api.add_resource(CoursebyId, '/course/<int:course_id>')
 api.add_resource(CoursesbyTeacherId, '/teacher/<int:teacher_id>/courses')
 api.add_resource(CoursesbyStudentId, '/student/<int:student_id>/courses')
 api.add_resource(Assignments, '/assignments')

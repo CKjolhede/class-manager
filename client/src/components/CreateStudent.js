@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export default function CreateStudent() {
@@ -7,34 +7,90 @@ export default function CreateStudent() {
         last_name: '',
         email: '',
         password_hash: 'password',
-        enrolledCourses: [],
+        //enrolledCourses: [],
     });
-    const [allCourses, setAllCourses] = useState([]);
-    console.log('allCourses', allCourses);
+    console.log('student', student);
+    //const [allCourses, setAllCourses] = useState([]);
+
     const navigate = useNavigate();
 
-    useEffect(() => {
-        const fetchCourses = async () => {
-            const response = await fetch('/courses');
-            const data = await response.json();
-            setAllCourses(data);
-        }
-        fetchCourses();
-    }, []);
+    //const createStudentAssignments = async (newStudent) => {
+    //    for (const courseId of student.enrolledCourses) {
+    //        const courseAssignments = allCourses.find(
+    //            (course) => course.id === courseId
+    //        ).assignments;
+    //        console.log("courseAssignments", courseAssignments);
+    //        const newStudentAssignments = courseAssignments.map(
+    //            (assignment) => ({
+    //                student_id: newStudent.id,
+    //                assignment_id: assignment.id,
+    //                points_earned: 0,
+    //            })
+    //        );
+
+    //        for (const assignment of newStudentAssignments) {
+    //            await fetch("/student_assignments", {
+    //                method: "POST",
+    //                headers: {
+    //                    "Content-Type": "application/json",
+    //                },
+    //                body: JSON.stringify(assignment),
+    //            });
+    //        }
+    //    }
+    //};
+    
+    //useEffect(() => {
+    //    const fetchCourses = async () => {
+    //        const response = await fetch('/courses');
+    //        const data = await response.json();
+    //        setAllCourses(data);
+    //    }
+    //    fetchCourses();
+    //}, []);
 
     const handleInputChange = (event) => {
         setStudent({ ...student, [event.target.name]: event.target.value });
     };
 
-    const handleCourseChange = (event) => {
-        const selectedCourseId = parseInt(event.target.value);
-        const updatedEnrolledCourses = student.enrolledCourses.includes(selectedCourseId)
-        ? student.enrolledCourses.filter((id) => id !== selectedCourseId)
-        : [...student.enrolledCourses, selectedCourseId];
+    //const handleCourseChange = (event) => {
+    //    const selectedCourseId = parseInt(event.target.value);
+    //    console.log("selectedCourseId", selectedCourseId);
+    //    const updatedEnrolledCourses = student.enrolledCourses.includes(selectedCourseId)
+    //    ? student.enrolledCourses.filter((id) => id !== selectedCourseId)
+    //    : [...student.enrolledCourses, selectedCourseId];
 
-        setStudent({ ...student, enrolledCourses: updatedEnrolledCourses });
-    };
+    //    setStudent({ ...student, enrolledCourses: updatedEnrolledCourses });
+    //};
 
+    
+    //const createStudentAssignments = async () => {
+    //            for (const courseId of student.enrolledCourses) {
+    //                const courseAssignments = allCourses.find(
+    //                    (course) => course.id === courseId
+    //                ).assignments;
+    //                console.log("courseAssignments", courseAssignments);
+    //                const newStudentAssignments = courseAssignments.map(
+    //                    (assignment) => ({
+    //                        student_id: newStudent.id,
+    //                        assignment_id: assignment.id,
+    //                        points_earned: 0,
+    //                    })
+    //                );
+
+    //                for (const assignment of newStudentAssignments) {
+    //                    await fetch("/student_assignments", {
+    //                        method: "POST",
+    //                        headers: {
+    //                            "Content-Type": "application/json",
+    //                        },
+    //                        body: JSON.stringify(assignment),
+    //                    });
+    //                }
+    //            }
+    //        };
+    
+    
     const handleSubmit = async (event) => {
         event.preventDefault();
         console.log('student', student);
@@ -50,36 +106,13 @@ export default function CreateStudent() {
                 last_name: student.last_name,
                 password_hash: student.password_hash
             }
-        });
-
-            console.log('Created student response:', JSON.stringify(response));
+            });
             if (response.ok) {
-            const newStudent = await response.json();
-
-            const createStudentAssignments = async () => {
-            for (const courseId of student.enrolledCourses) {
-                const courseAssignments = allCourses.find((course) => course.id === courseId).assignments;
-                const newStudentAssignments = courseAssignments.map((assignment) => ({
-                student_id: newStudent.id,
-                assignment_id: assignment.id,
-                points_earned: 0,
-                }));
-
-                for (const assignment of newStudentAssignments) {
-                await fetch('/student_assignments', {
-                    method: 'POST',
-                    headers: {
-                    'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(assignment),
-                });
-                }
-            }
-            };
-
-            await createStudentAssignments();
-            navigate('/students');
-        } else {
+                const newStudent = await response.json();
+                setStudent(newStudent)
+            //await createStudentAssignments(newStudent);
+                navigate('/students');
+            } else {
             console.error('Failed to create student');
         }
         } catch (error) {
@@ -101,20 +134,20 @@ export default function CreateStudent() {
             Email:
             <input type="email" name="email" value={student.email} onChange={handleInputChange} />
             </label>
-            <label>
+            {/*<label>
                 Password:
                 <input type="password" name="password_hash" value={student.password_hash} onChange={handleInputChange} />
-            </label>
-        <label>
+            </label>*/}
+        {/*<label>
             Enroll in Courses:
-            <select multiple type="checkbox" value={student.enrolledCourses} onChange={handleCourseChange}>
+            <select multiple value={student.enrolledCourses} onChange={handleCourseChange}>
             {allCourses.map((course) => (
                 <option key={course.id} value={course.id}>
                 {course.description}
                 </option>
             ))}
             </select>
-        </label>
+        </label>*/}
         <button type="submit">Create Student</button>
         </form>
     );

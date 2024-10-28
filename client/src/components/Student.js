@@ -7,6 +7,8 @@ export default function Student({ courseAssignments, studentAssignments }) {
     const { studentId, courseId } = useParams();
     const [student, setStudent] = useState({});
     const [course, setCourse] = useState({});
+    console.log("student", student)
+    console.log("course", course)
     console.log('student courseAssignments', courseAssignments)
     console.log('student studentAssignments', studentAssignments)
     
@@ -29,10 +31,11 @@ export default function Student({ courseAssignments, studentAssignments }) {
                 const response = await fetch(url);
                 if (response.ok) {
                     const data = await response.json()
+                    console.log(data)
                     setCourse({
-                        description: data[0].description,
-                        courseId: data[0].id,
-                        teacherId: data[0].teacher_id,
+                        description: data.description,
+                        courseId: data.id,
+                        teacherId: data.teacher_id,
                         teacherName: data[1]
                     });
                 }
@@ -44,18 +47,23 @@ export default function Student({ courseAssignments, studentAssignments }) {
         fetchCourse();
         fetchStudent();
     }, [studentId, courseId]);
-    
+    console.log(course)
     
     return (
         <>
+            <div class="container-fluid p-5 m-0">
             <h3>Student:</h3>
             <NavLink to={`/studentpage/${studentId}`}>
                 <h1>
                     {student.first_name} {student.last_name}
                 </h1>
             </NavLink>
-            <h2> {course.description}</h2>
-            <table>
+                <h2> {course.description}</h2>
+                
+            </div>
+
+            <div class="container-fluid ps-4 m-0">
+            <table class="table table-striped-columns">
                 <thead>
                     <tr>
                         {courseAssignments.map((assignment) => (
@@ -81,10 +89,6 @@ export default function Student({ courseAssignments, studentAssignments }) {
                                 (sa) =>
                                     sa.assignment_id ===
                                     courseAssignment.assignment_id
-                            );
-                            console.log(
-                                "student thisAssignment",
-                                thisAssignment
                             );
                             return (
                                 <td key={courseAssignment.assignment_id}>
@@ -130,7 +134,7 @@ export default function Student({ courseAssignments, studentAssignments }) {
                         </td>
                     </tr>
                 </tbody>
-            </table>
+            </table></div>
         </>
     );
 }

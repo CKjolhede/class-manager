@@ -1,19 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from "../contexts/AuthContext";
-import { NavLink, useParams } from 'react-router-dom';
-import EditAssignment from './EditAssignment';
-import { Routes, Route } from "react-router-dom";
+import { NavLink, useParams, useNavigate} from 'react-router-dom';
+//import EditAssignment from './EditAssignment';
 
-export default function Assignment() {
+
+export default function Assignment({ handleAssignmentUpdate, assignment }) {
     const {  user,userType } = useAuth();
     const { assignmentId, courseId } = useParams();
-    const [assignment, setAssignment] = useState([]);
+
+    const navigate = useNavigate();
+    //const [assignment, setAssignment] = useState([]);
     const [studentAssignments, setStudentAssignments] = useState([]);
-    console.log("assignment fetchedassignment", assignment)
-    console.log("assignment fetchedstudentassignments", studentAssignments)
-    const handleAssignmentUpdate = async (updatedAssignment) => {
-        setAssignment(updatedAssignment);
-    }
+    
+    
+    //const handleAssignmentUpdate = async (updatedAssignment) => {
+    //    setAssignment(updatedAssignment);
+    //}
     
     const pointsEarned = () => {
         const studentAssignment = studentAssignments?.find(
@@ -62,8 +64,8 @@ export default function Assignment() {
                 const assignmentresponse = await fetch(`/assignment/${assignmentId}`);
                 if (assignmentresponse.ok) {
                     const assignment = await assignmentresponse.json();
-                console.log("assiginment fetchassignment response:", assignment);
-                    setAssignment(assignment);
+            
+                    handleAssignmentUpdate(assignment);
                     
                 const studentAssignmentsResponse = await fetch(
                     `/assignment/${assignmentId}/studentassignments`
@@ -79,7 +81,22 @@ export default function Assignment() {
                 console.error("Error:", error);
             }
         };
+        
+        //const fetchCourse = async () => {
+        //    try {
+        //        const response = await fetch(`/course/${courseId}`);
+        //        if (response.ok) {
+        //            const data = await response.json();
+        //            setCourse(data);
+        //        }
+        //    } catch (error) {
+        //        console.error("Error:", error);
+        //    }
+        //};
+
+        //fetchCourse();
         fetchAssignment();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [assignmentId])
     
     if (!assignment || !studentAssignments) {
@@ -88,11 +105,16 @@ export default function Assignment() {
     
     return (
         <>
-            {userType === "teacher" ? (
-                
-            
-            <NavLink to={`/course/${assignment.course_id}/students`}>Students</NavLink>) : null}
-            
+            <div class="container-fluid ps-5 m-0">
+                <div class="btn-group col-3 d-md-flex">
+            {userType === "student" ? (<>
+                    <button class="btn btn-primary" onClick={() => navigate(-1)}>Assignments</button></>): null}
+            {userType === "teacher" ? (<>
+                    <button class="btn btn-primary" onClick={() => navigate(-1)}>Assignments </button>
+                    <button class="btn btn-primary" onClick={() => navigate(`/editassignment/${assignmentId}`)}>Edit</button>
+                    <button class="btn btn-primary" onClick={() => navigate(`/course/${assignment.course_id}/students`)}>Students</button></>) : null}
+            </div>
+                {/*<h2>{course.description}</h2>*/}
             <h3>Assignment</h3>
             {assignment && (
                 <>
@@ -104,7 +126,6 @@ export default function Assignment() {
             {userType === "teacher" ? (
                 <>
                     <div>
-                        <h2>Student Assignments</h2>
                         <ul>
                             {studentAssignments.map((studentAssignment) => (
                                 <li key={studentAssignment.id}>
@@ -136,12 +157,8 @@ export default function Assignment() {
                         </ul>
                     </div>
                     <div>
-                        <NavLink
-                            to={`/assignment/${assignmentId}/edit`}
-                        >
-                            Edit
-                        </NavLink>
-                        <Routes>
+                
+                        {/*<Routes>
                             <Route
                                 path="/edit"
                                 element={
@@ -153,10 +170,11 @@ export default function Assignment() {
                                     />
                                 }
                             />
-                        </Routes>
+                        </Routes>*/}
                     </div>
                 </>
-            ) : null}
+                ) : null}
+            </div>
         </>
     );
 }

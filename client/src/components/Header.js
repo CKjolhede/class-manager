@@ -2,7 +2,7 @@ import React from 'react';
 import {  useNavigate } from 'react-router-dom';
 import { useAuth } from "../contexts/AuthContext";
 
-export default function Header() {
+export default function Header( {course}) {
     const {user,isLoggedIn,logout, userType } = useAuth();
     const navigate = useNavigate();
     
@@ -10,16 +10,18 @@ export default function Header() {
         <>
             <div class="row text-white bg-grad-db2b">
                 <div class="col-12 ps-5">
-                    <h1 class="text-white">Class Manager</h1>
+                    <h1 class="display-5 text-white">Class Manager</h1>
                 </div>
                 <div class="row">
-                        <h2 class="col-5 ps-5 ms-5">
+                        <h2 class="col-2 ps-5 ms-5">
                             {userType === "teacher"
                                 ? user.name
                                 : userType === "student"
                                 ? user.first_name + " " + user.last_name
                                 : "."}
-                        </h2>
+                    </h2>
+                    <h2 class='col-5 ps-5 ms-5'>{course?.name}</h2>
+                    
 
                     {isLoggedIn === true && (
                         <> <div class="col-4"></div>
@@ -40,7 +42,7 @@ export default function Header() {
                                                 navigate("/teacherstudents")
                                             }
                                         >
-                                            Students
+                                            All Students
                                         </button>
                                         <button
                                             type="button"
