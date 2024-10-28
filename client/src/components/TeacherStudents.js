@@ -24,7 +24,7 @@ export default function TeacherStudents() {
     }, [user]);
 
     return (
-        <div>
+        <div className="container-fluid ps-5 m-0">
             <h1>All Students</h1>
             <ul>
                 {allStudents.map((student) => (

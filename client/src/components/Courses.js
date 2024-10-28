@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from "../contexts/AuthContext";
 import { NavLink } from 'react-router-dom';
+import portfolio from '../assets/img/portfolio-2.jpg'
+import masthead from '../assets/img/bg-masthead.jpg'
 
 export default function Courses() {
     const { userType, user } = useAuth();
@@ -26,18 +28,45 @@ export default function Courses() {
     return (
         <>
             <div class="container-fluid p-0 m-0 ">
-                <div class="row  ps-1 m-0 w-100%">
-                    <ul class="list-group ps-5 col-3 p-0 m-0">
+                <img
+                    src={portfolio}
+                    class="img-fluid w-100 h-auto overflow-hidden position-absolute"
+                    alt="portfolio"
+                />
+                <div class="row ps-1 m-5 position-relative">
                         {courses?.map((course) => (
-                            <li key={course.id}>
-                                <NavLink
-                                    to={"../course/" + course.id}
-                                    params={{ courseId: course.id }} >
-                                    {course.description}
-                                </NavLink>
-                            </li>
+                            <div class="col-2 p-0 m-0 ">
+                            <>
+                                <div class="card-group mt-3 ms-5">
+                                    <div class="card">
+                                        <img
+                                            class="card-img"
+                                            style={{ width: "100%", height: "auto" }}
+                                            src={masthead}
+                                            alt="Card cap"
+                                        />
+                                        <div class="card-img-overlay">
+                                            <h4 class="card-title position-absolute translate-middle top-50 start-50">
+                                                
+                                                <NavLink
+                                                    to={
+                                                        "../course/" + course.id
+                                                    }
+                                                    params={{
+                                                        courseId: course.id,
+                                                    }}
+                                                >
+                                                    {course.description}
+                                                </NavLink>
+                                            </h4>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                    
+                            </>
+                    </div>
                         ))}
-                    </ul>
                 </div>
             </div>
         </>

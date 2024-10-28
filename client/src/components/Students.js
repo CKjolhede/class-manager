@@ -61,21 +61,22 @@ export default function Students({ handleSetCourseAssignments, courseAssignments
     return (
         <>
             <div>
+                <div class='container-fluid ps-5 pt-2 pb-2 m-0 fw-bold bg-gray-600'>
                 {userType === "teacher" ? (
                     <NavLink to={`/course/${courseId}/addassignment`}>
                         New Assignment
                     </NavLink>
-                ) : null}
-                <h1>Students</h1>
+                ) : null}</div>
+                <h1 class="ps-5">Students</h1>
 
                 {courseStudents.length > 0 && courseAssignments.length > 0 && (
-                    <div>
-                        <table>
+                    <div class="table-responsive ps-5 pe-5">
+                        <table class="table table-hover table-primary">
                             <thead>
                                 <tr>
-                                    <th>Student</th>
+                                    <th class="text-center col-1">Student</th>
                                     {courseAssignments.map((assignment) => (
-                                        <th key={assignment.id}>
+                                        <th class="text-center col-2" key={assignment.id}>
                                             <NavLink
                                                 to={`/assignment/${assignment.assignment_id}`}
                                             >

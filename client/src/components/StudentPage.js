@@ -2,13 +2,24 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from "../contexts/AuthContext";
 import { useParams, NavLink } from 'react-router-dom';
 
-export default function StudentPage() {
+export default function StudentPage({handleSetCourseAssignments, handleSetStudentAssignments, courseAssignments, studentAssignments}) {
     const { user } = useAuth();
-    const { studentId } = useParams();
+    const { studentId, courseId } = useParams();
     const [studentCourses, setStudentCourses] = useState([]);
     const [student, setStudent] = useState({});
     
     useEffect(() => {
+        const fetchStudent = async () => {
+            try {
+                const response = await fetch(`/student/${studentId}`);
+                if (response.ok) {
+                    const student = await response.json();
+                    setStudent(student);
+                }
+            } catch (error) {
+                console.error("Error:", error);
+            }
+        }
         const fetchStudentCourses = async () => {
             try {
                 const response = await fetch(`/student/${studentId}/courses`);
@@ -21,20 +32,42 @@ export default function StudentPage() {
             }
         };
         
-        const fetchStudent = async () => {
+        
+        const getAssignmentsByCourse = async () => {
             try {
-                const response = await fetch(`/student/${studentId}`);
+                const response = await fetch(`/course/${courseId}/assignments`);
                 if (response.ok) {
-                    const student = await response.json();
-                    setStudent(student);
+                    const assignments = await response.json();
+
+                    handleSetCourseAssignments(assignments);
                 }
             } catch (error) {
                 console.error("Error:", error);
             }
-        }
+        };
+        
+        const getStudentAssignmentsByCourse = async () => {
+            try {
+                const response = await fetch(`/course/${courseId}/studentassignments`);
+                if (response.ok) {
+                    const studentassignments = await response.json();
+                    handleSetStudentAssignments(studentassignments);
+                }
+            } catch (error) {
+                console.error("Error:", error);
+            }
+        };
+
+        
+        
+        
+        
         fetchStudent();
         fetchStudentCourses();
-    }, [studentId]);
+        getAssignmentsByCourse();
+        getStudentAssignmentsByCourse();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [studentId, courseId ]);
     
     
     return (
