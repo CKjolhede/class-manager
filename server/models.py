@@ -44,6 +44,8 @@ class StudentCourse(db.Model, SerializerMixin):
     student_id = db.Column(db.Integer, db.ForeignKey('students.id'), nullable=False)
     course_id = db.Column(db.Integer, db.ForeignKey('courses.id'), nullable=False)
     
+    __table_args__ = (UniqueConstraint('student_id', 'course_id', name='_student_course_uc'),)
+    
     serializer_rules = ('-students.student_courses', '-courses.student_courses')
 
     def __repr__(self):
@@ -74,7 +76,7 @@ class Student(db.Model, SerializerMixin):
     first_name = db.Column(db.String(100), nullable=False)
     last_name = db.Column(db.String(100), nullable=False)
     _password_hash = db.Column(db.String, nullable=False, default='password')
-    email = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(100), nullable=False, unique=True)
     
     #assignments = db.relationship('Assignment', secondary='student_assignments', back_populates='students') 
     courses = db.relationship('Course', secondary="student_courses", back_populates='students')
@@ -108,7 +110,7 @@ class Teacher(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     _password_hash = db.Column(db.String, nullable=False)
-    email = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(100), nullable=False, unique=True)
     
     courses = db.relationship('Course', back_populates='teachers', lazy=True)
 

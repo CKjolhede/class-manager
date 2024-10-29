@@ -1,7 +1,8 @@
-import React, { useState} from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export default function CreateStudent() {
+    const [error, setError] = useState(null);
     const [student, setStudent] = useState({
         first_name: '',
         last_name: '',
@@ -10,11 +11,14 @@ export default function CreateStudent() {
         //enrolledCourses: [],
     });
     console.log('student', student);
-    //const [allCourses, setAllCourses] = useState([]);
 
     const navigate = useNavigate();
 
+
     //const createStudentAssignments = async (newStudent) => {
+    //    console.log("newStudent", newStudent)
+    //    console.log("student.enrolledCourses", student.enrolledCourses)
+    //    console.log("student", student)
     //    for (const courseId of student.enrolledCourses) {
     //        const courseAssignments = allCourses.find(
     //            (course) => course.id === courseId
@@ -40,14 +44,6 @@ export default function CreateStudent() {
     //    }
     //};
     
-    //useEffect(() => {
-    //    const fetchCourses = async () => {
-    //        const response = await fetch('/courses');
-    //        const data = await response.json();
-    //        setAllCourses(data);
-    //    }
-    //    fetchCourses();
-    //}, []);
 
     const handleInputChange = (event) => {
         setStudent({ ...student, [event.target.name]: event.target.value });
@@ -58,37 +54,12 @@ export default function CreateStudent() {
     //    console.log("selectedCourseId", selectedCourseId);
     //    const updatedEnrolledCourses = student.enrolledCourses.includes(selectedCourseId)
     //    ? student.enrolledCourses.filter((id) => id !== selectedCourseId)
-    //    : [...student.enrolledCourses, selectedCourseId];
+    //    : [...student.enrolledCourses, selectedCourseId] : [selectedCourseId];
 
     //    setStudent({ ...student, enrolledCourses: updatedEnrolledCourses });
     //};
 
-    
-    //const createStudentAssignments = async () => {
-    //            for (const courseId of student.enrolledCourses) {
-    //                const courseAssignments = allCourses.find(
-    //                    (course) => course.id === courseId
-    //                ).assignments;
-    //                console.log("courseAssignments", courseAssignments);
-    //                const newStudentAssignments = courseAssignments.map(
-    //                    (assignment) => ({
-    //                        student_id: newStudent.id,
-    //                        assignment_id: assignment.id,
-    //                        points_earned: 0,
-    //                    })
-    //                );
-
-    //                for (const assignment of newStudentAssignments) {
-    //                    await fetch("/student_assignments", {
-    //                        method: "POST",
-    //                        headers: {
-    //                            "Content-Type": "application/json",
-    //                        },
-    //                        body: JSON.stringify(assignment),
-    //                    });
-    //                }
-    //            }
-    //        };
+  
     
     
     const handleSubmit = async (event) => {
@@ -100,28 +71,37 @@ export default function CreateStudent() {
             headers: {
             'Content-Type': 'application/json',
             },
-            body: {
+            body: JSON.stringify({
                 email: student.email,
                 first_name: student.first_name,
                 last_name: student.last_name,
                 password_hash: student.password_hash
-            }
+            })
             });
             if (response.ok) {
                 const newStudent = await response.json();
                 setStudent(newStudent)
             //await createStudentAssignments(newStudent);
-                navigate('/students');
+                navigate(`/addstudenttocourse/${newStudent.id}`);
             } else {
-            console.error('Failed to create student');
+                const errorMessage = await response.text();
+                console.error('Failed to create student', errorMessage);
+                if (response.status === 409) {
+                    setError('The email address is already in use');
+                } else {
+                    setError('An error occurred while creating the student');
+                }
+                setError('An error occurred while creating the student');
         }
         } catch (error) {
-        console.error('Error:', error);
+            console.error('Error:', error);
+            setError('An error occurred while creating the student')
         }
     };
 
     return (
         <form onSubmit={handleSubmit}>
+            {error && <div class="error">{error}</div>}
         <label>
             First Name:
             <input type="text" name="first_name" value={student.first_name} onChange={handleInputChange} />
@@ -134,20 +114,11 @@ export default function CreateStudent() {
             Email:
             <input type="email" name="email" value={student.email} onChange={handleInputChange} />
             </label>
-            {/*<label>
+            <label>
                 Password:
                 <input type="password" name="password_hash" value={student.password_hash} onChange={handleInputChange} />
-            </label>*/}
-        {/*<label>
-            Enroll in Courses:
-            <select multiple value={student.enrolledCourses} onChange={handleCourseChange}>
-            {allCourses.map((course) => (
-                <option key={course.id} value={course.id}>
-                {course.description}
-                </option>
-            ))}
-            </select>
-        </label>*/}
+            </label>
+       
         <button type="submit">Create Student</button>
         </form>
     );
