@@ -29,8 +29,7 @@ export default function Header( {course}) {
                                     <button
                                         type="button"
                                         class="btn  btn-primary btn-bg-darkblue"
-                                        onClick={() => navigate("/courses")}
-                                    >
+                                        onClick={() => navigate("/courses")}>
                                         Courses
                                     </button>
                                 {userType === "teacher" && (
@@ -39,23 +38,28 @@ export default function Header( {course}) {
                                             type="button"
                                             class="btn btn-primary"
                                             onClick={() =>
-                                                navigate("/teacherstudents")
-                                            }
-                                        >
+                                                navigate("/teacherstudents")} >
                                             All Students
                                         </button>
                                         <button
                                             type="button"
                                             class="btn btn-primary"
-                                            onClick={() => navigate("/createstudent")}  > New Student</button>                                  
-                                </>)}
-                                    <button
-                                        type="button"
-                                        class="btn btn-primary btn-warning "
-                                        onClick={logout}
-                                    >
-                                        Logout
-                                </button>
+                                            onClick={() => navigate("/createstudent")}  >
+                                            New Student
+                                        </button>
+                                        <button
+                                            type="button"
+                                            class="btn btn-primary"
+                                            onClick={() => navigate("/enrollstudent")}  >
+                                            Enroll Student
+                                        </button>
+                                    </>)}
+                                        <button
+                                            type="button"
+                                            class="btn btn-primary btn-warning "
+                                            onClick={logout}>
+                                            Logout
+                                        </button>
                                 </div>
                             
                     </>

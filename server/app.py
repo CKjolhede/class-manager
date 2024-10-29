@@ -24,7 +24,6 @@ def login_teacher():
     
     if teacher and teacher.authenticate(password):
         session["user_id"] = teacher.id
-        #session["user_type"] = "teacher"
         teacher.userType = "teacher"
         return make_response(teacher.to_dict(only=["id", "name", "email", "userType"]), 200)
     else:
@@ -45,22 +44,6 @@ def login_student():
     else:
         raise Unauthorized
 
-#@app.route("/login", methods=["POST"])
-#def login():
-#    data = request.get_json()
-#    email, password = data["email"], data["password"]
-
-#    for UserModel in [Teacher, Student]:
-#        user = UserModel.query.filter(UserModel.email == email).first()
-#        #ipdb.set_trace()
-#        session["user_id"] = user.id
-#        if user and user.authenticate(password):
-#            user.userType = "teacher" if UserModel == Teacher else "student"
-#            return make_response(user.to_dict(only=[
-#                "id", "name", "userType" if UserModel == Teacher else "first_name", "last_name", "email", "userType"
-#                ]), 200)
-
-#    raise Unauthorized
 
 @app.route("/authorized")
 def authorized():
@@ -73,24 +56,7 @@ def authorized():
                 return make_response({"user_info": user.to_dict()}, 200)
 
     raise Unauthorized
-#@app.route("/authorized")
-#def authorized():
-    #if session.get("user_id") and session.get("user_type"):
-    #    if session["user_type"] == "teacher":
-    #        user = Teacher.query.filter(Teacher.id == session["user_id"]).first()
-    #    elif session["user_type"] == "student":
-    #        user = Student.query.filter(Student.id == session["user_id"]).first()
-    #    if user:
-    #        return make_response({"user_type": session["user_type"], "user_info": user.to_dict()}, 200)
-    #return make_response("Unauthorized", 401)
-    #ipdb.set_trace()
-    #if user := Teacher.query.filter(Teacher.id == session.get("user_id")).first():
-    #    return make_response({"user_info" : user.to_dict()}, 200)
-    #elif user := Student.query.filter(Student.id == session.get("user_id")).first():
-    #    return make_response({"user_info": user.to_dict()}, 200)
-    #else:
-        
-    #    raise Unauthorized
+
     
 @app.route("/logout", methods=["DELETE"])
 def logout():
@@ -178,6 +144,31 @@ class StudentsbyCourseId(Resource):
     def get(self, course_id):
         students = Student.query.join(StudentCourse).filter(StudentCourse.course_id == course_id).all()
         return [student.to_dict(only=["id", "first_name", "last_name", "email"]) for student in students]
+    
+    def post(self, course_id):
+        data = request.get_json()
+        student_ids = data.get("student_ids", [])
+
+        for student_id in student_ids:
+            enrollment = StudentCourse(course_id=course_id, student_id=student_id)
+            db.session.add(enrollment)
+            db.session.commit()
+
+        return {"message": "Students enrolled successfully"}, 201
+    
+class StudentCourses(Resource):
+    def get(self, student_id):
+        courses = Course.query.join(StudentCourse).filter(StudentCourse.student_id == student_id).all()
+        return [course.to_dict(only=["id", "description", "teacher_id"]) for course in courses]
+    
+    def post(self, course_id, student_id):
+        studentcourse = StudentCourse( course_id=course_id, student_id=student_id)
+        db.session.add(studentcourse)
+        db.session.commit()
+        return studentcourse.to_dict(only=["student_id", "course_id"]), 201
+api.add_resource(StudentCourses, '/course/<int:course_id>/student/<int:student_id>')
+
+
     
 class StudentsbyAssignmentId(Resource):
     def get(self, assignment_id):
@@ -358,12 +349,14 @@ class StudentAssignments(Resource):
     def get(self):
         assignments = StudentAssignment.query.all()
         return [assignment.to_dict(only=["points_earned", "assignment_id", "student_id"]) for assignment in assignments]
-    
-    def post(self):
-        assignment = StudentAssignment(**request.get_json())
+
+class CreateStudentAssignments(Resource):
+    def post(self, assignment_id, student_id):
+        assignment = StudentAssignment( assignment_id=assignment_id, student_id=student_id, points_earned=0  )
         db.session.add(assignment)
         db.session.commit()
         return assignment.to_dict(only=["points_earned", "assignment_id", "student_id"]), 201
+api.add_resource(CreateStudentAssignments, '/assignment/<int:assignment_id>/student/<int:student_id>')
 
 class StudentAssignmentsbyCourseId(Resource):
     def get(self, course_id):
@@ -448,6 +441,7 @@ api.add_resource(StudentsbyAssignmentId, '/assignment/<int:assignment_id>/studen
 api.add_resource(StudentsbyTeacherId, '/teacher/<int:teacher_id>/students')
 api.add_resource(Courses, '/courses')
 api.add_resource(CoursebyId, '/course/<int:course_id>')
+
 api.add_resource(CoursesbyTeacherId, '/teacher/<int:teacher_id>/courses')
 api.add_resource(CoursesbyStudentId, '/student/<int:student_id>/courses')
 api.add_resource(Assignments, '/assignments')
@@ -462,6 +456,7 @@ api.add_resource(StudentAssignmentsbyStudentId, '/student/<int:student_id>/stude
 api.add_resource(StudentAssignments, '/studentassignments')
 api.add_resource(StudentAssignmentbyId, '/studentassignment/<int:studentassignment_id>')
 api.add_resource(StudentAssignmentsbyCourseId, '/course/<int:course_id>/studentassignments')
+
 #api.add_resource(StudentAssignmentsbyCourseId, '/course/<int:course_id>/studentassignments/<int:student_id>')
 
 

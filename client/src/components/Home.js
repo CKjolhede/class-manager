@@ -11,7 +11,7 @@ import Assignments from "./Assignments.js";
 import Assignment from "./Assignment.js";
 import EditAssignment from "./EditAssignment.js";
 import TeacherStudents from "./TeacherStudents.js";
-import AddStudentToCourse from "./AddStudentToCourse.js";
+import EnrollStudent from "./EnrollStudent.js";
 
 export default function Home() {
     const [studentAssignments, setStudentAssignments] = useState([]);
@@ -20,9 +20,8 @@ export default function Home() {
     const [isNavigating, setIsNavigating] = useState(false);
     const [assignment, setAssignment] = useState(null);
     
-      const handleAssignmentUpdate = async (updatedAssignment) => {
-          setAssignment(updatedAssignment);
-      };
+    const handleAssignmentUpdate = async (updatedAssignment) => {
+        setAssignment(updatedAssignment);};
     
     const handleSetCourseAssignments = (assignments) => {
         setCourseAssignments(assignments)
@@ -48,7 +47,7 @@ export default function Home() {
                 <Route path="course/:courseId/" element={<Course  />} />
                 <Route path="course/:courseId/assignments" element={<Assignments   />} />
                 <Route path="/course/:courseId/addassignment" element={<CreateAssignment />} />
-                <Route path="/addstudenttocourse" element={<AddStudentToCourse  courseAssignments={courseAssignments} />} />
+                <Route path="/enrollstudent/" element={<EnrollStudent />} />
                 <Route path="/teacherstudents" element={<TeacherStudents />} />
                 <Route path="studentpage/:studentId" element={<StudentPage handleSetCourseAssignments={handleSetCourseAssignments}/>} />
                 <Route path="/assignment/:assignmentId/" element={<Assignment handleAssignmentUpdate ={handleAssignmentUpdate} assignment={assignment} />} />

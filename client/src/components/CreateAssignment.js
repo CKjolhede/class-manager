@@ -38,7 +38,7 @@ export default function CreateAssignment({ assignStudentAssignment }) {
                         const studentsdata = await studentsResponse.json();
                         console.log(studentsdata)
                         studentsdata.forEach(async (student) => {
-                            await fetch(`/studentassignments`, {
+                            await fetch(`/assignment/${newAssignmentId}/student/${student.id}`, {
                                 method: "POST",
                                 headers: { "Content-Type": "application/json" },
                                 body: JSON.stringify({
@@ -56,7 +56,7 @@ export default function CreateAssignment({ assignStudentAssignment }) {
                     } }      
                 }
                 catch (error) {
-                console.error(error);
+                console.error(setErrors ,error);
             }
         }
     });    
